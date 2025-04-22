@@ -9,8 +9,20 @@
 #pragma region Command Mappings
 
 Shell::Shell() {
+    // extra mappings
     _commands["?"] = &(COMMANDS.at("help"));
+
     _commands["clear"] = &(COMMANDS.at("clr"));
+    _commands["cls"] = &(COMMANDS.at("clr"));
+
+    _commands["move"] = &COMMANDS.at("mv");
+    _commands["copy"] = &COMMANDS.at("cp");
+
+    _commands["remove"] = &COMMANDS.at("rm");
+    _commands["delete"] = &COMMANDS.at("rm");
+
+    _commands["print"] = &COMMANDS.at("echo");
+    _commands["show"] = &COMMANDS.at("echo");
 };
 
 /* Extra mapping; Not needed
@@ -18,12 +30,7 @@ Shell::Shell() {
 _commands["cls"] = _commands.at("clr");
 _commands["clear"] = _commands.at("clr");
 
-_commands["move"] = _commands.at("mv");
-_commands["copy"] = _commands.at("cp");
-_commands["remove"] = _commands.at("rm");
-_commands["delete"] = _commands.at("rm");
-_commands["print"] = _commands.at("echo");
-_commands["show"] = _commands.at("echo");
+
 */
 
 #pragma region 1. cd
@@ -58,22 +65,25 @@ void Shell::Help() {
     sort(sorted.begin(), sorted.end(),
          [](auto& a, auto& b) { return a.second.Type < b.second.Type; });
 
-    // sort(sorted.begin(), sorted.end());
-
     for (const pair<string, CommandInfo>& cmd : sorted)
         cout << cmd.first << "\t\t" << cmd.second.Description << endl;
 }
+
+void Shell::Help(const CommandType& type, const string& example) {}
+
 #pragma endregion
 
 #pragma region 7. pause
 void Shell::Pause() {
-    cout << "Press Enter to continue...";
-    std::cin.ignore();
+    cout << "Press Enter To Unpause...";
+
+    cin.clear();
+    cin.get();
 }
 #pragma endregion
 
 #pragma region 8. quit
-void Shell::Quit() { this->~Shell(); }
+void Shell::Quit() { exit(0); }
 #pragma endregion
 
 #pragma region 9. chmod
@@ -82,19 +92,14 @@ void Shell::Quit() { this->~Shell(); }
 
 #pragma region Command
 CommandType Shell::GetCommandType(const string& cmd) {
-    return Shell::COMMANDS.find(cmd) != Shell::COMMANDS.end() ||
-                   _commands.find(cmd) != _commands.end()
-               ? Shell::COMMANDS.at(cmd).Type
-               : CommandType::INVALID;
+    return GetCommandInfo(cmd).Type;
 }
-
-string SanitizeInput(string input) {
-    const size_t n = input.size();  // cus size might change
-    for (size_t i = 0; i < n; i++) {
-        if (isspace(input[i])) input.erase(i--, i);
-        input[i] = tolower(input[i]);
-    }
-    // delete spaces
-    input.erase(remove_if(input.begin(), input.end(), isspace), input.end());
-    return input;
+const CommandInfo Shell::GetCommandInfo(const string& cmd) {
+    if (Shell::COMMANDS.find(cmd) != Shell::COMMANDS.end())
+        return Shell::COMMANDS.at(cmd);
+    if (this->_commands.find(cmd) != this->_commands.end())
+        return *this->_commands.at(cmd);
+    else
+        return CommandInfo(CommandType::INVALID,
+                           "'" + cmd + "' is not a valid command.");
 }

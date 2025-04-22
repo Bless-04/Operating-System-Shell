@@ -4,16 +4,18 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "CommandInfo.h"
 
-// using std::cin;
+using std::cin;
 using std::cout;
 using std::endl;
-// using std::getline;
+using std::getline;
 using std::pair;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 /**
@@ -40,7 +42,25 @@ class Shell {
     /// @note string should be sanitized
     CommandType GetCommandType(const string&);
 
-    string SanitizeString(string);
+    /// @brief CommandInfo using the string
+    /// @param string The command name
+    /// @return A copy of the command info of the command if it
+    /// exists and nullptr if it doesnt
+    const CommandInfo GetCommandInfo(const string&);
+    CommandInfo operator[](const string& cmd) { return GetCommandInfo(cmd); }
+    CommandInfo operator[](CommandType cmd) {
+        for (const auto& command : Shell::COMMANDS)
+            if (command.second.Type == cmd) return command.second;
+
+        return CommandInfo(CommandType::INVALID);
+    }
+    /// @brief sanitizes the input string by removing spaces and converting to
+    /// lowercase for easy searching
+    /// @param input the sanitized input
+    /// @param blacklist characters to remove
+    /// @return The sanitized string
+    static string SanitizeInput(const string& input,
+                                const unordered_set<char>& Remove);
 
 #pragma endregion
 
@@ -58,7 +78,7 @@ class Shell {
      * PWD environment variable accordingly.
      * @return true if directory exists
      * */
-    void Change_Directory(string path);
+    void Change_Directory(string);
 
     /** (cls)
      * clears the display screen. */
@@ -68,7 +88,7 @@ class Shell {
      * the contents of a specified directory.
      * @param directory The specified directory
      * */
-    void List_Directory_Contents(string directory);
+    void List_Directory_Contents(string);
 
     /** (environ)
      * displays all environment strings. */
@@ -82,6 +102,9 @@ class Shell {
 
     /** (help)
      *  Displays the user manual using the more filter. */
+    void Help(const CommandType&, const string&);
+
+    /// @brief Displays default commands
     void Help();
 
     /** (pause)
@@ -91,7 +114,7 @@ class Shell {
     /** (quit)
      *
      * exit the shell.
-     * @note Its just a destructor
+     * @note ends program
      * */
     void Quit();
 
@@ -153,7 +176,7 @@ class Shell {
 #pragma endregion
 };
 
-#pragma region default commands
+#pragma region default things shared between all shells / static stuff
 unordered_map<string, CommandInfo> Shell::COMMANDS = {
     {"cd", CommandInfo{cd, "Changes current directory"}},
     {"clr", CommandInfo{clr, "Clears the display screen."}},
@@ -177,4 +200,21 @@ unordered_map<string, CommandInfo> Shell::COMMANDS = {
     {"grep", CommandInfo{grep, "Searches for text patterns."}},
     {"wc", CommandInfo{wc, "Counts lines, words, and bytes."}}};
 
+string Shell::SanitizeInput(const string& input,
+                            const unordered_set<char>& blacklist = {'\t', '\n',
+                                                                    '\r'}) {
+    if (input.empty()) return input;
+    // if (blacklist.empty()
+
+    string sanitize;
+    sanitize.reserve(input.size());
+    for (size_t i = 0; i < input.size(); i++) {
+        if (isspace(input[i]) || blacklist.find(input[i]) != blacklist.end())
+            continue;
+        sanitize.push_back(input[i]);
+    }
+
+    sanitize.shrink_to_fit();
+    return sanitize;
+}
 #endif

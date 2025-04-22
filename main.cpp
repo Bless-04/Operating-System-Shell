@@ -6,7 +6,8 @@
 
 int main() {
     Shell shell;
-    shell.Echo("test");
 
     shell.Help();
+
+    // shell.Help(CommandType::cd, "help <command>");
 }

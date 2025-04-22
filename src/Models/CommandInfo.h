@@ -13,7 +13,7 @@ struct CommandInfo {
     /// @brief The description of the command
     string Description;
 
-    CommandInfo(CommandType type, string description)
+    CommandInfo(CommandType type, string description = "")
         : Type(type), Description(description) {}
 };
 #endif
