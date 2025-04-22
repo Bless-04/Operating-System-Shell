@@ -1,19 +1,12 @@
+#ifdef _WIN32
 #include "src/Shells/Windows.h"
-
-string FormatInput(const string& input);
+#else
+#include "src/Shells/Ubuntu.h"
+#endif
 
 int main() {
     Shell shell;
+    shell.Echo("test");
+
     shell.Help();
-}
-
-string FormatInput(const string& input) {
-    string lower_name = "";
-    lower_name.reserve(input.size());
-
-    // Remove spaces and lowercase
-    for (const char& c : input)
-        if (c != _SPACE || c != ' ') lower_name.push_back(tolower(c));
-
-    return lower_name;
 }

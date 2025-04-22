@@ -1,3 +1,5 @@
+#ifndef COMMANDINFO_H
+#define COMMANDINFO_H
 #include <string>
 
 #include "CommandType.h"
@@ -14,3 +16,4 @@ struct CommandInfo {
     CommandInfo(CommandType type, string description)
         : Type(type), Description(description) {}
 };
+#endif

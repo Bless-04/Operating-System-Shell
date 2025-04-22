@@ -2,7 +2,11 @@
  *Enumeration of command types
  * Maps each command given in the Proj2.pdf to an integer
  */
-enum CommandType : char {
+enum CommandType {
+    /// @brief Invalid Command
+    /// @note For when command doesnt exist
+    INVALID = false,
+
     /// @brief Change Directory
     cd = 1,
 

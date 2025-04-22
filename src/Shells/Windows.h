@@ -1,5 +1,4 @@
 /** For Defining Shell Functions that are windows specific */
-#ifdef _WIN32
 #include <Windows.h>   // Required for ULONG and other Windows types
 #include <ntdef.h>     // Required for NTSTATUS
 #include <ntstatus.h>  // Required for STATUS_NO_MORE_FILES
@@ -35,6 +34,7 @@ void Shell::Change_Ownership(string owner) {
 
 #pragma region 11. ls
 void Shell::List_Files(string path) {
+    /*
     cout << "Windows Listed directory" << path << endl;
 
     HANDLE hDir =
@@ -113,6 +113,7 @@ void Shell::List_Files(string path) {
     } while (true);
 
     CloseHandle(hDir);
+    */
 }
 #pragma endregion
 
@@ -146,4 +147,3 @@ void Shell::Remove_Files(vector<string> files) {
     cout << "Windows Removed file" << files[0] << endl;
 }
 #pragma endregion
-#endif

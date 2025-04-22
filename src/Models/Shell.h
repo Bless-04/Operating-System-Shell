@@ -7,12 +7,12 @@
 #include <vector>
 
 #include "CommandInfo.h"
-#include "CommandSet.h"
 
-using std::cin;
+// using std::cin;
 using std::cout;
 using std::endl;
-using std::getline;
+// using std::getline;
+using std::pair;
 using std::unordered_map;
 using std::vector;
 
@@ -23,17 +23,27 @@ using std::vector;
 
 class Shell {
    private:
-#pragma region Command Mappings
+#pragma region Command Functionality
 
     /// @brief Default Commands; command names to the commandinfo
-    /// @note everything is lowercase
+    /// @note all commands should be lowercase
     static unordered_map<string, CommandInfo> COMMANDS;
 
     /// @brief for extra naming
     unordered_map<string, CommandInfo*> _commands;
-#pragma endregion
 
    public:
+    /// @brief CommandType using the string
+    /// @param string The  command name
+    /// @return CommandType The command type of the command if it exists and
+    /// Invalid/0/false if it doesnt
+    /// @note string should be sanitized
+    CommandType GetCommandType(const string&);
+
+    string SanitizeString(string);
+
+#pragma endregion
+
     /// @brief Default Shell constructor
     Shell();
 
@@ -68,7 +78,7 @@ class Shell {
      * displays a comment on the screen, followed by a new line.
      * @note Reduces multiple spaces/tabs to a single space.
      */
-    void Echo(string comment);
+    void Echo(const string&);
 
     /** (help)
      *  Displays the user manual using the more filter. */
