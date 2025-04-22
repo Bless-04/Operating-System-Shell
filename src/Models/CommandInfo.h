@@ -13,6 +13,8 @@ struct CommandInfo {
     /// @brief The description of the command
     string Description;
 
+    CommandInfo() : Type(CommandType::INVALID) {}
+
     CommandInfo(CommandType type, string description = "")
         : Type(type), Description(description) {}
 };

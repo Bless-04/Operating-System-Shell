@@ -1,3 +1,5 @@
+#ifndef Shell_CPP
+#define Shell_CPP
 /* For Defining Functions that are simple enough to not have to use OS specific
  * functions
  */
@@ -15,6 +17,8 @@ Shell::Shell() {
     _commands["clear"] = &(COMMANDS.at("clr"));
     _commands["cls"] = &(COMMANDS.at("clr"));
 
+    _commands["env"] = &(COMMANDS.at("environ"));
+
     _commands["move"] = &COMMANDS.at("mv");
     _commands["copy"] = &COMMANDS.at("cp");
 
@@ -23,6 +27,7 @@ Shell::Shell() {
 
     _commands["print"] = &COMMANDS.at("echo");
     _commands["show"] = &COMMANDS.at("echo");
+    _commands["display"] = &COMMANDS.at("echo");
 };
 
 /* Extra mapping; Not needed
@@ -103,3 +108,4 @@ const CommandInfo Shell::GetCommandInfo(const string& cmd) {
         return CommandInfo(CommandType::INVALID,
                            "'" + cmd + "' is not a valid command.");
 }
+#endif

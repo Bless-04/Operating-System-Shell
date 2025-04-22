@@ -4,7 +4,7 @@
 #include <ntstatus.h>  // Required for STATUS_NO_MORE_FILES
 #include <winternl.h>  // Required for PIO_STATUS_BLOCK
 
-#include "../Models/Shell.cpp"  //shell.cpp later
+#include "Models/Shell.cpp"  //shell.cpp later
 
 #pragma region 1. cd
 void Shell::Change_Directory(string path) {

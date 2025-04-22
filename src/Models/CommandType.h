@@ -1,3 +1,5 @@
+#ifndef COMMANDTYPE_H
+#define COMMANDTYPE_H
 /**
  *Enumeration of command types
  * Maps each command given in the Proj2.pdf to an integer
@@ -70,3 +72,4 @@ enum CommandType {
     /// @brief Word Count
     wc = 21
 };
+#endif
