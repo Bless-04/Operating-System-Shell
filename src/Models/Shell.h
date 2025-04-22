@@ -182,7 +182,7 @@ unordered_map<string, CommandInfo> Shell::COMMANDS = {
     {"clr", CommandInfo{clr, "Clears the display screen."}},
     {"dir", CommandInfo{dir, "Lists the directory contents."}},
     {"environ", CommandInfo{env, "Lists the environment variables."}},
-    {"echo", CommandInfo{echo, "Displays a comment."}},
+    {"echo", CommandInfo{echo, "Displays text."}},
     {"help", CommandInfo{help, "Displays help."}},
     {"pause", CommandInfo{pause, "Pauses the shell."}},
     {"quit", CommandInfo{quit, "Quits the shell."}},

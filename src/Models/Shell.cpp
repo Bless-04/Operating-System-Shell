@@ -11,23 +11,30 @@
 #pragma region Command Mappings
 
 Shell::Shell() {
-    // extra mappings
-    _commands["?"] = &(COMMANDS.at("help"));
+    // for extra mappings
+    CommandInfo* cmd_ptr = &(COMMANDS.at("help"));
+    _commands["?"] = cmd_ptr;
+    _commands["info"] = cmd_ptr;
 
-    _commands["clear"] = &(COMMANDS.at("clr"));
-    _commands["cls"] = &(COMMANDS.at("clr"));
+    cmd_ptr = &COMMANDS.at("clr");
+    _commands["clear"] = cmd_ptr;
+    _commands["cls"] = cmd_ptr;
 
     _commands["env"] = &(COMMANDS.at("environ"));
 
-    _commands["move"] = &COMMANDS.at("mv");
-    _commands["copy"] = &COMMANDS.at("cp");
+    cmd_ptr = &COMMANDS.at("mv");
+    _commands["move"] = cmd_ptr;
+    _commands["copy"] = cmd_ptr;
 
-    _commands["remove"] = &COMMANDS.at("rm");
-    _commands["delete"] = &COMMANDS.at("rm");
+    cmd_ptr = &COMMANDS.at("rm");
+    _commands["remove"] = cmd_ptr;
+    _commands["delete"] = cmd_ptr;
+    _commands["del"] = cmd_ptr;
 
-    _commands["print"] = &COMMANDS.at("echo");
-    _commands["show"] = &COMMANDS.at("echo");
-    _commands["display"] = &COMMANDS.at("echo");
+    cmd_ptr = &COMMANDS.at("echo");
+    _commands["print"] = cmd_ptr;
+    _commands["show"] = cmd_ptr;
+    _commands["display"] = cmd_ptr;
 };
 
 /* Extra mapping; Not needed
