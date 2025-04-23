@@ -19,10 +19,9 @@ using std::unordered_set;
 using std::vector;
 
 /**
- * @author Blessing Abumere
+ * @author @Bless-04
  * @brief Shell object For COSC 439 Project
  */
-
 class Shell {
    private:
 #pragma region Command Functionality
@@ -44,9 +43,10 @@ class Shell {
 
     /// @brief CommandInfo using the string
     /// @param string The command name
-    /// @return A copy of the command info of the command if it
-    /// exists and nullptr if it doesnt
-    const CommandInfo GetCommandInfo(const string&);
+    /// @return A copy of the command info of the command;
+    /// @note if the command doesnt exist is returns CommandInfo with type
+    /// @note string should be sanitized
+    CommandInfo GetCommandInfo(const string&);
     CommandInfo operator[](const string& cmd) { return GetCommandInfo(cmd); }
     CommandInfo operator[](CommandType cmd) {
         for (const auto& command : Shell::COMMANDS)
@@ -59,6 +59,8 @@ class Shell {
     /// @param input the sanitized input
     /// @param blacklist characters to remove
     /// @return The sanitized string
+    /// @note the unordered_set must have something in it by default or it will
+    /// give an out of bounds error
     static string SanitizeInput(const string& input,
                                 const unordered_set<char>& Remove);
 
@@ -174,47 +176,16 @@ class Shell {
      * counts the number of lines, words, and characters in a file */
     void Word_Count(string);
 #pragma endregion
+
+    /** (execute)
+     * executes a executable in the shell.
+     * @param name the name of the executable to run
+     * @example execute("cmd.exe")
+     * @example execute("chrome.exe")
+     * @returns the process id of whatever process got executed;
+     * @returns -1 if failed
+     * */
+    pid_t Execute(string name);
 };
 
-#pragma region default things shared between all shells / static stuff
-unordered_map<string, CommandInfo> Shell::COMMANDS = {
-    {"cd", CommandInfo{cd, "Changes current directory"}},
-    {"clr", CommandInfo{clr, "Clears the display screen."}},
-    {"dir", CommandInfo{dir, "Lists the directory contents."}},
-    {"environ", CommandInfo{env, "Lists the environment variables."}},
-    {"echo", CommandInfo{echo, "Displays text."}},
-    {"help", CommandInfo{help, "Displays help."}},
-    {"pause", CommandInfo{pause, "Pauses the shell."}},
-    {"quit", CommandInfo{quit, "Quits the shell."}},
-    {"chmod", CommandInfo{chmod, "Displays file permissions."}},
-    {"chown", CommandInfo{chown, "Displays file ownership."}},
-    {"ls", CommandInfo{ls, "Lists Files."}},
-    {"pwd", CommandInfo{pwd, "Prints the working directory."}},
-    {"cat", CommandInfo{cat, "Concatenates and prints file contents."}},
-    {"mkdir", CommandInfo{mkdir, "Creates a new directory."}},
-    {"rmdir", CommandInfo{rmdir, "Removes a directory."}},
-    {"rm", CommandInfo{rm, "Removes a file."}},
-    {"cp", CommandInfo{cp, "Copies a file."}},
-    {"mv", CommandInfo{mv, "Moves a file."}},
-    {"touch", CommandInfo{touch, "Creates an empty file."}},
-    {"grep", CommandInfo{grep, "Searches for text patterns."}},
-    {"wc", CommandInfo{wc, "Counts lines, words, and bytes."}}};
-
-string Shell::SanitizeInput(const string& input,
-                            const unordered_set<char>& blacklist = {'\t', '\n',
-                                                                    '\r'}) {
-    if (input.empty()) return input;
-    // if (blacklist.empty()
-
-    string sanitize;
-    sanitize.reserve(input.size());
-    for (size_t i = 0; i < input.size(); i++) {
-        if (isspace(input[i]) || blacklist.find(input[i]) != blacklist.end())
-            continue;
-        sanitize.push_back(input[i]);
-    }
-
-    sanitize.shrink_to_fit();
-    return sanitize;
-}
 #endif

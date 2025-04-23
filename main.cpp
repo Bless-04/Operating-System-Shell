@@ -4,23 +4,43 @@
 #include "src/ubuntu_Shell.h"
 #endif
 
+#include <sstream>
+
+using std::stringstream;
+
 int main() {
-    CommandInfo info;
-    string command;
+    CommandInfo cmd;
+    string input;
     Shell shell;
 
     // shell.Help();
+    while (cmd.Type != CommandType::quit) {
+        cout << endl << "<< ";
+        getline(cin, input);
 
-    while (true) {
-        cout << "<< ";
-        getline(cin, command);
+        if (input.empty()) continue;  // skip empty
 
-        if (command.empty()) continue;  // skip empty
+        cmd = shell.GetCommandInfo(Shell::SanitizeInput(input));
 
-        info = shell.GetCommandInfo(command);
+        cout << "Command: " << cmd.Type << endl;
+        cout << "Description: " << cmd.Description << endl;
 
-        cout << endl << "Command: " << info.Type << endl;
-        cout << "Description: " << info.Description << endl;
+        /*if (shell.Execute(input) == -1)
+            std::cerr << "Failed to start process " << input << endl;*/
     }
     // shell.Help(CommandType::cd, "help <command>");
+}
+
+/// @brief Splits string into vector of strings
+/// @param str
+/// @param delimiter
+/// @return vector of strings
+vector<string> splitString(const string& str, char delimiter) {
+    vector<string> tokens;
+    stringstream ss(str);
+    string token;
+    while (getline(ss, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
 }

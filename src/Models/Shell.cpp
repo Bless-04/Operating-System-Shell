@@ -35,15 +35,15 @@ Shell::Shell() {
     _commands["print"] = cmd_ptr;
     _commands["show"] = cmd_ptr;
     _commands["display"] = cmd_ptr;
+
+    cmd_ptr = &COMMANDS.at("quit");
+    _commands["exit"] = cmd_ptr;
+    _commands["q"] = cmd_ptr;
+    _commands["leave"] = cmd_ptr;
+    _commands["close"] = cmd_ptr;
+    _commands["end"] = cmd_ptr;
+    _commands["stop"] = cmd_ptr;
 };
-
-/* Extra mapping; Not needed
-
-_commands["cls"] = _commands.at("clr");
-_commands["clear"] = _commands.at("clr");
-
-
-*/
 
 #pragma region 1. cd
 
@@ -106,7 +106,7 @@ void Shell::Quit() { exit(0); }
 CommandType Shell::GetCommandType(const string& cmd) {
     return GetCommandInfo(cmd).Type;
 }
-const CommandInfo Shell::GetCommandInfo(const string& cmd) {
+CommandInfo Shell::GetCommandInfo(const string& cmd) {
     if (Shell::COMMANDS.find(cmd) != Shell::COMMANDS.end())
         return Shell::COMMANDS.at(cmd);
     if (this->_commands.find(cmd) != this->_commands.end())
@@ -116,3 +116,47 @@ const CommandInfo Shell::GetCommandInfo(const string& cmd) {
                            "'" + cmd + "' is not a valid command.");
 }
 #endif
+
+#pragma region Static Definitions
+unordered_map<string, CommandInfo> Shell::COMMANDS = {
+    {"cd", CommandInfo{cd, "Changes current directory"}},
+    {"clr", CommandInfo{clr, "Clears the display screen."}},
+    {"dir", CommandInfo{dir, "Lists the directory contents."}},
+    {"environ", CommandInfo{env, "Lists the environment variables."}},
+    {"echo", CommandInfo{echo, "Displays text."}},
+    {"help", CommandInfo{help, "Displays help."}},
+    {"pause", CommandInfo{pause, "Pauses the shell."}},
+    {"quit", CommandInfo{quit, "Quits the shell."}},
+    {"chmod", CommandInfo{chmod, "Displays file permissions."}},
+    {"chown", CommandInfo{chown, "Displays file ownership."}},
+    {"ls", CommandInfo{ls, "Lists Files."}},
+    {"pwd", CommandInfo{pwd, "Prints the working directory."}},
+    {"cat", CommandInfo{cat, "Concatenates and prints file contents."}},
+    {"mkdir", CommandInfo{mkdir, "Creates a new directory."}},
+    {"rmdir", CommandInfo{rmdir, "Removes a directory."}},
+    {"rm", CommandInfo{rm, "Removes a file."}},
+    {"cp", CommandInfo{cp, "Copies a file."}},
+    {"mv", CommandInfo{mv, "Moves a file."}},
+    {"touch", CommandInfo{touch, "Creates an empty file."}},
+    {"grep", CommandInfo{grep, "Searches for text patterns."}},
+    {"wc", CommandInfo{wc, "Counts lines, words, and bytes."}}};
+
+string Shell::SanitizeInput(const string& input,
+                            const unordered_set<char>& blacklist = {'\t', '\n',
+                                                                    '\r'}) {
+    if (input.empty()) return input;
+    // if (blacklist.empty()
+
+    string sanitize;
+    sanitize.reserve(input.size());
+    for (size_t i = 0; i < input.size(); i++) {
+        if (isspace(input[i]) || blacklist.find(input[i]) != blacklist.end())
+            continue;
+        sanitize.push_back(input[i]);
+    }
+
+    sanitize.shrink_to_fit();
+    return sanitize;
+}
+
+#pragma endregion

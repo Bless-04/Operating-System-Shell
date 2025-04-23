@@ -1,10 +1,14 @@
 /** For Defining Shell Functions that are windows specific */
-#include <Windows.h>   // Required for ULONG and other Windows types
-#include <ntdef.h>     // Required for NTSTATUS
-#include <ntstatus.h>  // Required for STATUS_NO_MORE_FILES
-#include <winternl.h>  // Required for PIO_STATUS_BLOCK
+#include <Windows.h>
+#include <ntdef.h>
+#include <ntstatus.h>
+#include <winternl.h>
 
 #include "Models/Shell.cpp"  //shell.cpp later
+
+#ifndef pid_t
+#define pid_t long long  // for process id
+#endif
 
 #pragma region 1. cd
 void Shell::Change_Directory(string path) {
@@ -145,5 +149,27 @@ void Shell::Remove_Directories(string directory) {
 #pragma region 16. Remove Files (rm)
 void Shell::Remove_Files(vector<string> files) {
     cout << "Windows Removed file" << files[0] << endl;
+}
+#pragma endregion
+
+#pragma region Execution / Starting Process
+pid_t Shell::Execute(string name) {
+    // todo: this probably isnt a syscall; change later
+    // syscall is probably nt related
+
+    STARTUPINFOA s_info = STARTUPINFOA();
+    PROCESS_INFORMATION p_info = PROCESS_INFORMATION();
+
+    if (!CreateProcessA(nullptr, (char*)name.c_str(), nullptr, nullptr, FALSE,
+                        0, nullptr, nullptr, &s_info, &p_info)) {
+        return -1;
+    }
+
+    WaitForSingleObject(p_info.hProcess, INFINITE);
+
+    CloseHandle(p_info.hProcess);
+    CloseHandle(p_info.hThread);
+
+    return p_info.dwProcessId;
 }
 #pragma endregion
