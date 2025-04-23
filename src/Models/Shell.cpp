@@ -44,23 +44,13 @@ Shell::Shell() {
     _commands["stop"] = cmd_ptr;
 };
 
-#pragma region 1. cd
-
+// 1. cd probably depends on platform
+// 2. clr probably depends on platform
+// 3. dir definitely depends on platform
+// 4. environ probably depends on platform
 #pragma endregion
 
-#pragma region 2. clr
-#pragma endregion
-
-#pragma region 3. dir
-// void Shell::List_Directory_Contents(string path);
-#pragma endregion
-
-#pragma region 4. environ
-void Shell::Environment_Variables() {
-    cout << "Shell Listed environment variables" << endl;
-}
-#pragma endregion
-
+// 5. basic echo is just cout
 #pragma region 5. echo
 void Shell::Echo(const string& text) { cout << text << endl; }
 #pragma endregion
@@ -125,7 +115,7 @@ unordered_map<string, CommandInfo> Shell::COMMANDS = {
     {"echo", CommandInfo{echo, "Displays text."}},
     {"help", CommandInfo{help, "Displays help."}},
     {"pause", CommandInfo{pause, "Pauses the shell."}},
-    {"quit", CommandInfo{quit, "Quits the shell."}},
+    {"quit", CommandInfo{quit, "Quits the shell process."}},
     {"chmod", CommandInfo{chmod, "Displays file permissions."}},
     {"chown", CommandInfo{chown, "Displays file ownership."}},
     {"ls", CommandInfo{ls, "Lists Files."}},
@@ -144,14 +134,13 @@ string Shell::SanitizeInput(const string& input,
                             const unordered_set<char>& blacklist = {'\t', '\n',
                                                                     '\r'}) {
     if (input.empty()) return input;
-    // if (blacklist.empty()
-
     string sanitize;
     sanitize.reserve(input.size());
     for (size_t i = 0; i < input.size(); i++) {
         if (isspace(input[i]) || blacklist.find(input[i]) != blacklist.end())
             continue;
-        sanitize.push_back(input[i]);
+        else
+            sanitize.push_back(input[i]);
     }
 
     sanitize.shrink_to_fit();

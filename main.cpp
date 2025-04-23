@@ -3,10 +3,10 @@
 #else
 #include "src/ubuntu_Shell.cpp"
 #endif
-
 #include <sstream>
-
 using std::stringstream;
+
+vector<string> SplitString(const string&, char);
 
 int main() {
     CommandInfo cmd;
