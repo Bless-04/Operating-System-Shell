@@ -6,7 +6,6 @@
 #include "Shell.h"
 
 #include <algorithm>
-#include <unordered_map>
 
 #pragma region Command Mappings
 

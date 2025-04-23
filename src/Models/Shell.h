@@ -67,6 +67,7 @@ class Shell {
 #pragma endregion
 
     /// @brief Default Shell constructor
+    /// @note the extra commands are added in here
     Shell();
 
 #pragma region Features To Implement For Project in Order

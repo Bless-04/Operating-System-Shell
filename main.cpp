@@ -31,16 +31,15 @@ int main() {
     // shell.Help(CommandType::cd, "help <command>");
 }
 
-/// @brief Splits string into vector of strings
+/// @brief Splits string by delimiter
 /// @param str
 /// @param delimiter
 /// @return vector of strings
-vector<string> splitString(const string& str, char delimiter) {
-    vector<string> tokens;
-    stringstream ss(str);
-    string token;
-    while (getline(ss, token, delimiter)) {
-        tokens.push_back(token);
-    }
-    return tokens;
+vector<string> SplitString(const string& input, char delimiter) {
+    vector<string> args;
+    stringstream ss(input);
+    string arg;
+    while (getline(ss, arg, delimiter)) args.push_back(arg);
+
+    return args;
 }
