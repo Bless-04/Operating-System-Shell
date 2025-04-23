@@ -52,7 +52,11 @@ Shell::Shell() {
 
 // 5. basic echo is just cout
 #pragma region 5. echo
-void Shell::Echo(const string& text) { cout << text << endl; }
+#include <regex>
+
+void Shell::Echo(const string& text) {
+    cout << std::regex_replace(text, std::regex("[ \t]+"), " ");
+}
 #pragma endregion
 
 #pragma region 6. help
@@ -60,14 +64,20 @@ void Shell::Help() {
     vector<pair<string, CommandInfo>> sorted;  // commands sorted by commandtype
     sorted.reserve(Shell::COMMANDS.size());
 
-    for (const pair<string, CommandInfo>& cmd : Shell::COMMANDS)
-        sorted.push_back(cmd);
+    cout << "Default Commands:" << endl;
+    for (auto& cmd : Shell::COMMANDS) sorted.push_back(cmd);
 
     sort(sorted.begin(), sorted.end(),
          [](auto& a, auto& b) { return a.second.Type < b.second.Type; });
 
-    for (const pair<string, CommandInfo>& cmd : sorted)
+    for (auto& cmd : sorted)
         cout << cmd.first << "\t\t" << cmd.second.Description << endl;
+
+    /*
+cout << endl << "Extra Command Mappings:" << endl;
+for (auto& cmd : _commands)
+    cout << cmd.first << "\t\t" << cmd.second->Description << endl;
+    */
 }
 
 void Shell::Help(const CommandType& type, const string& example) {}

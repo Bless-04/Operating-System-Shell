@@ -9,6 +9,7 @@
 
 #include "CommandInfo.h"
 
+using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
@@ -19,8 +20,8 @@ using std::unordered_set;
 using std::vector;
 
 /**
- * @author @Bless-04
  * @brief Shell object For COSC 439 Project
+ * @note It holds the command mappings and the command definitions/functions
  */
 class Shell {
    private:

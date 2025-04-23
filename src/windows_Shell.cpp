@@ -1,7 +1,7 @@
 /** For Defining Shell Functions that are windows specific */
-#include <Windows.h>
 #include <ntdef.h>
 #include <ntstatus.h>
+#include <windows.h>
 #include <winternl.h>
 
 #include "Models/Shell.cpp"  //shell.cpp later
@@ -17,10 +17,33 @@ void Shell::Change_Directory(string path) {
 #pragma endregion
 
 #pragma region 2. clr
-void Shell::Clear_Screen() { cout << "Windows Cleared screen" << endl; }
+void Shell::Clear_Screen() {
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+
+    cout << "\033[2J\033[H";
+}
 #pragma endregion
 
 #pragma region 3. dir
+
+#pragma endregion
+
+#pragma region 4. env
+void Shell::Environment_Variables() {
+    char* envs = (char*)GetEnvironmentStrings();
+    if (envs == NULL) {
+        cerr << "Failed to Get Environment Strings." << endl;
+        return;
+    }
+
+    for (char* e = envs; *e; e += strlen(e) + 1) cout << e << endl;
+
+    FreeEnvironmentStringsA(envs);
+}
 
 #pragma endregion
 
