@@ -1,7 +1,7 @@
 #ifdef _WIN32
-#include "src/windows_Shell.h"
+#include "src/windows_Shell.cpp"
 #else
-#include "src/ubuntu_Shell.h"
+#include "src/ubuntu_Shell.cpp"
 #endif
 
 #include <sstream>
