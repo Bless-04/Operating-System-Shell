@@ -6,7 +6,12 @@
 #include "Shell.h"
 
 #include <algorithm>
+#include <iostream>
 
+using std::cerr;
+using std::cin;
+using std::cout;
+using std::endl;
 #pragma region Command Mappings
 
 Shell::Shell() {
@@ -140,9 +145,9 @@ unordered_map<string, CommandInfo> Shell::COMMANDS = {
     {"grep", CommandInfo{grep, "Searches for text patterns."}},
     {"wc", CommandInfo{wc, "Counts lines, words, and bytes."}}};
 
-string Shell::SanitizeInput(const string& input,
-                            const unordered_set<char>& blacklist = {'\t', '\n',
-                                                                    '\r'}) {
+string Shell::SanitizeString(const string& input,
+                             const unordered_set<char>& blacklist = {'\t', '\n',
+                                                                     '\r'}) {
     if (input.empty()) return input;
     string sanitize;
     sanitize.reserve(input.size());
@@ -150,7 +155,7 @@ string Shell::SanitizeInput(const string& input,
         if (isspace(input[i]) || blacklist.find(input[i]) != blacklist.end())
             continue;
         else
-            sanitize.push_back(input[i]);
+            sanitize.push_back(tolower(input[i]));
     }
 
     sanitize.shrink_to_fit();

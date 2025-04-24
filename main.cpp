@@ -5,7 +5,10 @@
 #include "src/ubuntu_Shell.cpp"
 #define os "Unix Based OS"
 #endif
+
 #include <sstream>
+
+using std::getline;
 using std::stringstream;
 
 vector<string> SplitString(const string&, char);
@@ -56,7 +59,7 @@ void TryExecute(const string& input, Shell& shell, CommandInfo& cmd_info) {
     args.shrink_to_fit();
 
     string text;
-    cmd_info = shell.GetCommandType(Shell::SanitizeInput(args[0]));
+    cmd_info = shell.GetCommandType(Shell::SanitizeString(args[0]));
 
     switch (cmd_info.Type) {
         case cd:
@@ -109,7 +112,7 @@ void TryExecute(const string& input, Shell& shell, CommandInfo& cmd_info) {
         default:
         case INVALID:
 
-            pid_t pid = shell.Execute(input);
+            int pid = shell.Execute(input);
             if (pid == -1)
 
                 cerr << "'" << args[0]

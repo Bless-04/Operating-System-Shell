@@ -2,18 +2,12 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-#include <iostream>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
 #include "CommandInfo.h"
 
-using std::cerr;
-using std::cin;
-using std::cout;
-using std::endl;
-using std::getline;
 using std::pair;
 using std::unordered_map;
 using std::unordered_set;
@@ -61,9 +55,9 @@ class Shell {
     /// @param blacklist characters to remove
     /// @return The sanitized string
     /// @note the unordered_set must have something in it by default or it will
-    /// give an out of bounds error
-    static string SanitizeInput(const string& input,
-                                const unordered_set<char>& Remove);
+    /// give an out of bounds error. It should have a default value
+    static string SanitizeString(const string& input,
+                                 const unordered_set<char>& Remove);
 
 #pragma endregion
 
@@ -187,7 +181,7 @@ class Shell {
      * @returns the process id of whatever process got executed;
      * @returns -1 if failed
      * */
-    pid_t Execute(string name);
+    int Execute(string name);
 };
 
 #endif
