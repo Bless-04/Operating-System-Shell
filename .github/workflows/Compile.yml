@@ -1,4 +1,4 @@
-#This tests that main builds on both windows and linux
+#This tests that shell builds on both windows and linux
 name: Build
 
 on:
@@ -11,7 +11,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - name: Compile On Ubuntu
+            - name: Shell Compilation (ubuntu)
               run: g++ -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
 
     Windows-Compilation:
@@ -19,5 +19,5 @@ jobs:
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v4
-            - name: Compile On Windows
+            - name: Shell Compilation (windows)
               run: g++ -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
