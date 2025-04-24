@@ -1,19 +1,21 @@
 #This tests that main builds on both windows and linux
-name: Shell
+name: Build
 
 on:
     push:
     workflow_dispatch:
 
 jobs:
-    build-Ubuntu:
+    Ubuntu-Compilation:
+        name: Compile On Ubuntu
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - name: Compile On Ubuntu
               run: g++ -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
 
-    build-Windows:
+    Windows-Compilation:
+        name: Compile On Windows
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v4
