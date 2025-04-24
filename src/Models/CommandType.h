@@ -10,66 +10,66 @@ enum CommandType {
     INVALID = false,
 
     /// @brief Change Directory
-    cd = 1,
+    CD = 1,
 
     /// @brief Clear Screen
-    clr = 2,
+    CLR = 2,
 
     /// @brief List Directory Contents
-    dir = 3,
+    DIR = 3,
 
     /// @brief  Environment Variables
-    env = 4,
+    ENVIRON = 4,
 
     /// @brief Echo Command
-    echo = 5,
+    ECHO = 5,
 
     /// @brief Help Manual
-    help = 6,
+    HELP = 6,
 
     /// @brief Pause Operation
-    pause = 7,
+    PAUSE = 7,
 
     /// @brief Quit Command
-    quit = 8,
+    QUIT = 8,
 
     /// @brief File Permissions
-    chmod = 9,
+    CHMOD = 9,
 
     /// @brief Change Ownership
-    chown = 10,
+    CHOWN = 10,
 
     /// @brief List Files
-    ls = 11,
+    LS = 11,
 
     /// @brief Print Working Directory
-    pwd = 12,
+    PWD = 12,
 
     /// @brief Concatenate and Display Files
-    cat = 13,
+    CAT = 13,
 
     /// @brief Create Directories
-    mkdir = 14,
+    MKDIR = 14,
 
     /// @brief Remove Directories
-    rmdir = 15,
+    RMDIR = 15,
 
     /// @brief Remove Files
-    rm = 16,
+    RM = 16,
 
     /// @brief Copy Files
-    cp = 17,
+    CP = 17,
 
     /// @brief Move Files
-    mv = 18,
+    MV = 18,
 
     /// @brief Create Empty Files
-    touch = 19,
+    TOUCH = 19,
 
     /// @brief Search Text Patterns
-    grep = 20,
+    GREP = 20,
 
     /// @brief Word Count
-    wc = 21
+    WC = 21
 };
 #endif

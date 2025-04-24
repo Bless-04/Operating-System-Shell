@@ -19,7 +19,7 @@ int main() {
     string input;
     Shell shell;
 
-    while (cmd.Type != CommandType::quit) {
+    while (cmd.Type != QUIT) {
         cout << endl << ">> ";
         getline(cin, input);
 
@@ -62,50 +62,50 @@ void TryExecute(const string& input, Shell& shell, CommandInfo& cmd_info) {
     cmd_info = shell.GetCommandType(Shell::SanitizeString(args[0]));
 
     switch (cmd_info.Type) {
-        case cd:
+        case CD:
             break;
-        case clr:
+        case CLR:
             shell.Clear_Screen();
             break;
-        case dir:
+        case DIR:
             // shell.List_Directory_Contents(input.substr(4));
             break;
-        case env:
+        case ENVIRON:
             shell.Environment_Variables();
             break;
-        case echo:
+        case ECHO:
             text.clear();
             for (size_t i = 1; i < args.size(); ++i) text.append(args[i] + ' ');
             shell.Echo(text);
             break;
-        case help:
+        case HELP:
             shell.Help();
             break;
-        case pause:
+        case PAUSE:
             shell.Pause();
             break;
-        case quit:
+        case QUIT:
             shell.Quit();
             break;
-        case chmod:
+        case CHMOD:
             // shell.File_Permissions(input.substr(7));
             break;
-        case chown:
+        case CHOWN:
             // shell.File_Permissions();
             break;
-        case ls:
+        case LS:
             //  shell.List_Files();
             break;
-        case pwd:
+        case PWD:
             //   shell.Print_Working_Directory();
             break;
-        case cat:
+        case CAT:
             // shell.Concatenate_File(input.substr(4));
             break;
-        case mkdir:
+        case MKDIR:
             // shell.Create_Directories();
             break;
-        case rmdir:
+        case RMDIR:
             // shell.Remove_Directories(args[1]);
             break;
 
