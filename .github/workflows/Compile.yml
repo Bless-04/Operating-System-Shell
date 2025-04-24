@@ -10,8 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
     - name: Compile On Ubuntu
       run: g++ -Wall main.cpp -o ./main
     
@@ -19,7 +17,5 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
     - name: Compile On Windows
       run: g++ -Wall main.cpp -o ./main
