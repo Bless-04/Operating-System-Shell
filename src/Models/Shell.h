@@ -23,12 +23,19 @@ class Shell {
 
     /// @brief Default Commands; command names to the commandinfo
     /// @note all commands should be lowercase
+    /// @note static because these are defaults
     static unordered_map<string, CommandInfo> COMMANDS;
 
     /// @brief for extra naming
+    /// @note pointer to default commands for no copying
     unordered_map<string, CommandInfo*> _commands;
 
    public:
+    // Shell() = default;
+
+    /// @brief Deletes _commands pointers;
+    ~Shell();
+
     /// @brief CommandType using the string
     /// @param string The  command name
     /// @return CommandType The command type of the command if it exists and

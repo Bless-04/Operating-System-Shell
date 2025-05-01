@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <regex>
 
 using std::cerr;
 using std::cin;
@@ -49,6 +50,10 @@ Shell::Shell() {
     _commands["stop"] = cmd_ptr;
 };
 
+Shell::~Shell() {
+    for (auto& cmd : _commands) delete cmd.second;
+    _commands.clear();
+}
 // 1. cd probably depends on platform
 // 2. clr probably depends on platform
 // 3. dir definitely depends on platform
@@ -57,7 +62,6 @@ Shell::Shell() {
 
 // 5. basic echo is just cout
 #pragma region 5. echo
-#include <regex>
 
 void Shell::Echo(const string& text) {
     cout << std::regex_replace(text, std::regex("[ \t]+"), " ");

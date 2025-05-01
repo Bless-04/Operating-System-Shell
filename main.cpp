@@ -30,6 +30,8 @@ int main() {
     // shell.Help(CommandType::cd, "help <command>");
 }
 
+/*stuff under here could be moved to a separate file */
+
 /// @brief Splits string by delimiter
 /// @param str
 /// @param delimiter
@@ -107,6 +109,9 @@ void TryExecute(const string& input, Shell& shell, CommandInfo& cmd_info) {
             break;
         case RMDIR:
             // shell.Remove_Directories(args[1]);
+            break;
+        case RM:
+            // shell.Remove_Files(args[1]);
             break;
 
         default:
