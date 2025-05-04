@@ -12,17 +12,7 @@ void Shell::Change_Directory(string path) {
 }
 #pragma endregion
 
-#pragma region 2. clr
-void Shell::Clear_Screen() {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    DWORD dwMode = 0;
-    GetConsoleMode(hOut, &dwMode);
-    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    SetConsoleMode(hOut, dwMode);
-
-    cout << "\033[2J\033[H";
-}
-#pragma endregion
+// 2. clear
 
 #pragma region 3. dir
 

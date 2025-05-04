@@ -55,7 +55,8 @@ Shell::~Shell() {
     _commands.clear();
 }
 // 1. cd probably depends on platform
-// 2. clr probably depends on platform
+//
+void Shell::Clear_Screen() { cout << "\033[2J"; }
 // 3. dir definitely depends on platform
 // 4. environ probably depends on platform
 #pragma endregion
