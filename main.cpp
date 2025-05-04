@@ -93,7 +93,7 @@ void TryExecute(const string& input, Shell& shell, CommandInfo& cmd_info) {
             //  shell.List_Files();
             break;
         case PWD:
-            //   shell.Print_Working_Directory();
+            shell.Print_Working_Directory();
             break;
         case CAT:
             // shell.Concatenate_File(input.substr(4));
