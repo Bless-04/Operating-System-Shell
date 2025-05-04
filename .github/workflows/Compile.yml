@@ -1,4 +1,4 @@
-#This tests that shell builds on both windows and linux
+#This tests that shell builds on multiple platforms
 name: Build
 
 on:
@@ -20,4 +20,12 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: Shell Compilation (windows)
+              run: g++ -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
+
+    MacOS-Compilation:
+        name: Compile On MacOS
+        runs-on: macos-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Shell Compilation (macOS)
               run: g++ -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
