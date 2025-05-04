@@ -64,6 +64,7 @@ Shell::~Shell() {
 #pragma region 5. echo
 
 void Shell::Echo(const string& text) {
+    /// reduces multiple spaces to a single space
     cout << std::regex_replace(text, std::regex("[ \t]+"), " ");
 }
 #pragma endregion

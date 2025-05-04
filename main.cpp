@@ -1,12 +1,6 @@
-#if defined(_WIN32) || defined(_WIN64)
-#include "src/windows_Shell.cpp"
-#define os "Windows Based OS"
-#else
-#include "src/ubuntu_Shell.cpp"
-#define os "Unix Based OS?"
-#endif
-
 #include <sstream>
+
+#include "src/shell_headers.h"
 
 using std::getline;
 using std::stringstream;
@@ -14,7 +8,7 @@ using std::stringstream;
 vector<string> SplitString(const string&, char);
 void TryExecute(const string&, Shell&, CommandInfo&);
 int main() {
-    cout << "COSC 439 Shell (" << os << ")";
+    cout << "COSC 439 Shell (" << OS << ")";
     CommandInfo cmd;
     string input;
     Shell shell;
