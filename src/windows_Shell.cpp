@@ -1,13 +1,41 @@
 /** For Defining Shell Functions that are windows specific */
 #include <ntdef.h>
 #include <ntstatus.h>
-#include <windows.h>
+#include <windows.system.h>
 #include <winternl.h>
 
 #include "Models/Shell.cpp"  //shell.cpp later
 
+using std::wcout;
+using std::wstring;
+
+const wstring& Shell::Current_DirectoryW() {
+    if (!this->_directoryW.empty()) return this->_directoryW;
+
+    const unsigned long length = GetCurrentDirectoryW(0, NULL);
+    if (length == 0) {
+        perror("Failed to get current directory.");
+        return this->_directoryW;
+    }
+
+    wchar_t DIRECTORY[length];
+    GetCurrentDirectoryW(length, DIRECTORY);
+
+    return this->_directoryW = DIRECTORY;
+}
+
+const string& Shell::Current_Directory() {
+    if (!this->_directory.empty()) return this->_directory;
+
+    this->Current_DirectoryW();  // updating directoryw
+    this->_directory =
+        string(this->_directoryW.begin(), this->_directoryW.end());
+
+    return this->_directory;
+}
+
 #pragma region 1. cd
-void Shell::Change_Directory(string path) {
+void Shell::Change_Directory(const string& path) {
     cout << "Windows Changed directory to " << path << endl;
 }
 #pragma endregion
@@ -20,159 +48,138 @@ void Shell::Change_Directory(string path) {
 
 #pragma region 4. env
 void Shell::Environment_Variables() {
-    char* envs = (char*)GetEnvironmentStrings();
+    wchar_t* envs = (wchar_t*)GetEnvironmentStringsW();
     if (envs == NULL) {
-        cerr << "Failed to Get Environment Strings." << endl;
+        perror("Failed to Get Environment Strings.");
         return;
     }
 
-    for (char* e = envs; *e; e += strlen(e) + 1) cout << e << endl;
+    for (wchar_t* e = envs; *e; e += wcslen(e) + 1) std::wcout << e << endl;
 
-    FreeEnvironmentStringsA(envs);
+    FreeEnvironmentStringsW(envs);
 }
-
 #pragma endregion
 
 #pragma region 9. chmod
-void Shell::File_Permissions(string perms) {
+void Shell::File_Permissions(const string& perms) {
     cout << "Windows Displayed file permissions" << perms << endl;
 }
 #pragma endregion
 
 #pragma region 10. chown
-void Shell::Change_Ownership(string owner) {
+void Shell::Change_Ownership(const string& owner) {
     cout << "Windows Displayed file owner" << owner << endl;
 }
 #pragma endregion
 
 #pragma region 11. ls
-void Shell::List_Files(string path) {
-    /*
-    cout << "Windows Listed directory" << path << endl;
+void Shell::List_Files() {
+    _WIN32_FIND_DATAW data;
+    HANDLE hFind;
 
-    HANDLE hDir =
-        CreateFileA(path.c_str(), FILE_LIST_DIRECTORY,
-                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                    NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+    wstring path = this->Current_DirectoryW();
+    path.append(L"\\*");
 
-    if (hDir == INVALID_HANDLE_VALUE) {
-        std::cerr << "Failed to open directory." << std::endl;
+    hFind = FindFirstFileW(path.c_str(), &data);
+
+    /// @note its char* instead of string so it works with both cout and wcout
+    const char* TAB2 = "\t\t";
+    if (hFind == INVALID_HANDLE_VALUE) {
+        perror("Could Not find files");
         return;
     }
-
-    typedef struct _FILE_DIRECTORY_INFORMATION {
-        ULONG NextEntryOffset;
-        ULONG FileIndex;
-        LARGE_INTEGER CreationTime;
-        LARGE_INTEGER LastAccessTime;
-        LARGE_INTEGER LastWriteTime;
-        LARGE_INTEGER ChangeTime;
-        LARGE_INTEGER EndOfFile;
-        LARGE_INTEGER AllocationSize;
-        ULONG FileAttributes;
-        ULONG FileNameLength;
-        WCHAR FileName[1];
-    } FILE_DIRECTORY_INFORMATION;
-
-    typedef NTSTATUS(NTAPI * NtQueryDirectoryFile_t)(
-        HANDLE, HANDLE, PVOID, PVOID, PIO_STATUS_BLOCK, PVOID, ULONG,
-        FILE_INFORMATION_CLASS, BOOLEAN, PUNICODE_STRING, BOOLEAN);
-
-    NtQueryDirectoryFile_t NtQueryDirectoryFile =
-        (NtQueryDirectoryFile_t)GetProcAddress(GetModuleHandleA("ntdll.dll"),
-                                               "NtQueryDirectoryFile");
-
-    if (!NtQueryDirectoryFile) {
-        std::cerr << "Failed to get NtQueryDirectoryFile function."
-                  << std::endl;
-        CloseHandle(hDir);
-        return;
-    }
-
-    BYTE buffer[1024];
-    IO_STATUS_BLOCK ioStatus;
-    NTSTATUS status;
-    bool restartScan = true;
 
     do {
-        status = NtQueryDirectoryFile(hDir, NULL, NULL, NULL, &ioStatus, buffer,
-                                      sizeof(buffer), FileDirectoryInformation,
-                                      FALSE, NULL, restartScan);
+        const unsigned long& flags = data.dwFileAttributes;
 
-        if (status == STATUS_NO_MORE_FILES) {
-            break;
-        }
+        cout << ((flags & FILE_ATTRIBUTE_DIRECTORY) ? "<DIR>\t" : "\t");
 
-        if (!NT_SUCCESS(status)) {
-            std::cerr << "NtQueryDirectoryFile failed." << std::endl;
-            break;
-        }
+        cout << data.nFileSizeLow << "\tbytes";
+        wcout << TAB2 << data.cFileName << endl;
+    } while (FindNextFileW(hFind, &data) != 0);
 
-        FILE_DIRECTORY_INFORMATION* info = (FILE_DIRECTORY_INFORMATION*)buffer;
-        do {
-            std::wstring fileName(info->FileName,
-                                  info->FileNameLength / sizeof(WCHAR));
-            std::wcout << fileName << std::endl;
+    if (GetLastError() != ERROR_NO_MORE_FILES)
+        perror("Failed to get the next file");
 
-            if (info->NextEntryOffset == 0) {
-                break;
-            }
-            info = (FILE_DIRECTORY_INFORMATION*)((BYTE*)info +
-                                                 info->NextEntryOffset);
-        } while (true);
-
-        restartScan = false;
-
-    } while (true);
-
-    CloseHandle(hDir);
-    */
+    FindClose(hFind);
 }
 #pragma endregion
 
 #pragma region 12. pwd
 void Shell::Print_Working_Directory() {
-    cout << "Windows Displayed working directory" << environ << endl;
+    cout << this->Current_Directory() << endl;
 }
 #pragma endregion
 
 #pragma region 13. cat
-void Shell::Concatenate_and_Display_Files(string file) {
-    cout << "Windows Displayed file" << file << endl;
+void Shell::Concatenate_and_Display_Files(const vector<string>& files) {
+    cout << "Windows Displayed file" << files[0] << endl;
 }
 #pragma endregion
 
 #pragma region 14. mkdir
-void Shell::Create_Directories(string directory) {
-    cout << "Windows Created directory" << directory << endl;
+
+void Shell::Create_Directories(const vector<string>& directories) {
+    cout << "Windows Created directory" << directories[0] << endl;
 }
 #pragma endregion
 
 #pragma region 15. rmdir
-void Shell::Remove_Directories(string directory) {
-    cout << "Windows Removed directory" << directory << endl;
+void Shell::Remove_Directories(const vector<string>& directories) {
+    cout << "Windows Removed directory" << directories[0] << endl;
 }
 
 #pragma endregion
 
 #pragma region 16. Remove Files (rm)
-void Shell::Remove_Files(vector<string> files) {
+void Shell::Remove_Files(const vector<string>& files) {
     cout << "Windows Removed file" << files[0] << endl;
 }
 #pragma endregion
 
-#pragma region Execution / Starting Process
-int Shell::Execute(string name) {
-    // todo: this probably isnt a syscall; change later
-    // syscall is probably nt related
+#pragma region 17. Copy Files (cp)
+void Shell::Copy_Files(const vector<string>& files, const string& dest) {
+    cout << "Windows Copied file" << files[0] << " to " << dest << endl;
+}
+#pragma endregion
 
+#pragma region 18. Move Files (mv)
+void Shell::Move_Files(const vector<string>& files) {
+    cout << "Windows Moved file" << endl;
+}
+#pragma endregion
+
+#pragma region 19. Create (touch)
+void Shell::Create_Empty_Files(const string& file) {
+    cout << "Windows Created file" << endl;
+}
+#pragma endregion
+
+#pragma region 20. search text patterns (grep)
+void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
+    cout << "Windows Opened file" << endl;
+}
+#pragma endregion
+
+#pragma region 21. word count (wc)
+void Shell::Word_Count(const string& file) {
+    size_t lines = 0, words = 0, chars = 0;
+
+    cout << file << endl;
+    cout << "lines: " << lines << endl;
+    cout << "words: " << words << endl;
+    cout << "chararacters: " << chars << endl;
+}
+#pragma endregion
+
+#pragma region Execution / Starting Process
+pid_t Shell::Execute(string name) {
     STARTUPINFOA s_info = STARTUPINFOA();
     PROCESS_INFORMATION p_info = PROCESS_INFORMATION();
 
     if (!CreateProcessA(nullptr, (char*)name.c_str(), nullptr, nullptr, FALSE,
-                        0, nullptr, nullptr, &s_info, &p_info)) {
+                        0, nullptr, nullptr, &s_info, &p_info))
         return -1;
-    }
 
     WaitForSingleObject(p_info.hProcess, INFINITE);
 
