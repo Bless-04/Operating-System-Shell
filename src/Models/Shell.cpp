@@ -8,11 +8,13 @@
 #include <algorithm>
 #include <iostream>
 #include <regex>
+#include <string>
 
-using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
+using std::pair;
+using std::wcout;
 #pragma region Command Mappings
 
 Shell::Shell() {
@@ -50,10 +52,7 @@ Shell::Shell() {
     _commands["stop"] = cmd_ptr;
 };
 
-Shell::~Shell() {
-    for (auto& cmd : _commands) delete cmd.second;
-    _commands.clear();
-}
+Shell::~Shell() { _commands.clear(); }
 // 1. cd probably depends on platform
 //
 void Shell::Clear_Screen() { cout << "\033[2J"; }
@@ -76,12 +75,13 @@ void Shell::Help() {
     sorted.reserve(Shell::COMMANDS.size());
 
     cout << "Default Commands:" << endl;
-    for (auto& cmd : Shell::COMMANDS) sorted.push_back(cmd);
+    for (pair<const string, CommandInfo>& cmd : Shell::COMMANDS)
+        sorted.push_back(cmd);
 
     sort(sorted.begin(), sorted.end(),
          [](auto& a, auto& b) { return a.second.Type < b.second.Type; });
 
-    for (auto& cmd : sorted)
+    for (pair<string, CommandInfo>& cmd : sorted)
         cout << cmd.first << "\t\t" << cmd.second.Description << endl;
 
     /*
@@ -169,3 +169,13 @@ string Shell::SanitizeString(const string& input,
 }
 
 #pragma endregion
+
+std::string Util::ToString(const wstring& widestring) noexcept(true) {
+    if (widestring.empty()) return string();
+    return string(widestring.begin(), widestring.end());
+}
+
+std::string Util::ToString(const wchar_t* widechar) noexcept(true) {
+    if (widechar == NULL || widechar == nullptr) return string();
+    return ToString(wstring(widechar, wcslen(widechar)));
+}

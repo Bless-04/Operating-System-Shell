@@ -1,26 +1,31 @@
 #include <sstream>
 
-#include "src/shell_headers.h"
+#include "src/shell_type.h"
 
+using std::cerr;
 using std::getline;
 using std::stringstream;
 
 vector<string> SplitString(const string&, char);
-void TryExecute(const string&, Shell&, CommandInfo&);
+CommandInfo TryExecute(const string&, Shell&);
+
 int main() {
-    cout << "COSC 439 Shell (" << OS << ")";
     CommandInfo cmd;
     string input;
     Shell shell;
 
+    cout << "COSC 439 Shell (" << OS << ")" << endl;
+    shell.List_Files();
+    /*
     while (cmd.Type != QUIT) {
-        cout << endl << ">> ";
+        cout << endl << shell.Current_Directory() << endl << ">> ";
         getline(cin, input);
 
         if (input.empty()) continue;  // skip empty
 
-        TryExecute(input, shell, cmd);
+        cmd = TryExecute(input, shell);
     }
+        */
     // shell.Help(CommandType::cd, "help <command>");
 }
 
@@ -48,14 +53,18 @@ void DeleteStartingSpaces(vector<string>& args) {
         args.erase(args.begin());
 }
 
-void TryExecute(const string& input, Shell& shell, CommandInfo& cmd_info) {
+/// @brief trys to run a shell command
+/// @param input string input
+/// @param shell the shell to use
+/// @return CommandInfo of the command executed
+CommandInfo TryExecute(const string& input, Shell& shell) {
     vector<string> args = SplitString(input, ' ');
 
     DeleteStartingSpaces(args);
     args.shrink_to_fit();
 
     string text;
-    cmd_info = shell.GetCommandType(Shell::SanitizeString(args[0]));
+    CommandInfo cmd_info = shell.GetCommandType(Shell::SanitizeString(args[0]));
 
     switch (cmd_info.Type) {
         case CD:
@@ -90,7 +99,7 @@ void TryExecute(const string& input, Shell& shell, CommandInfo& cmd_info) {
             // shell.File_Permissions();
             break;
         case LS:
-            //  shell.List_Files();
+            shell.List_Files();
             break;
         case PWD:
             shell.Print_Working_Directory();
@@ -107,18 +116,35 @@ void TryExecute(const string& input, Shell& shell, CommandInfo& cmd_info) {
         case RM:
             // shell.Remove_Files(args[1]);
             break;
+        case CP:
+            // shell.Copy_File(args[1], args[2]);
+            break;
+        case MV:
+            // shell.Move_File(args[1], args[2]);
+            break;
+        case TOUCH:
+            // shell.Create_Empty_File(args[1]);
+            break;
+        case GREP:
+            // shell.Search_File(args[1], args[2]);
+            break;
+        case WC:
+            shell.Word_Count(args[1]);
+            break;
 
         default:
         case INVALID:
 
-            int pid = shell.Execute(input);
+            pid_t pid = shell.Execute(input);
             if (pid == -1)
-
-                cerr << "'" << args[0]
-                     << "' is not a valid command or executable" << endl;
+                fprintf(stderr,
+                        "'%s' is not an existing command, operable program or "
+                        "batch file",
+                        args[0].c_str());
             else
                 cout << "Process started with PID: " << pid << endl;
-
             break;
     }
+
+    return cmd_info;
 }

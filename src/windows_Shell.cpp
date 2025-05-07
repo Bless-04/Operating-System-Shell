@@ -6,9 +6,6 @@
 
 #include "Models/Shell.cpp"  //shell.cpp later
 
-using std::wcout;
-using std::wstring;
-
 const wstring& Shell::Current_DirectoryW() {
     if (!this->_directoryW.empty()) return this->_directoryW;
 
@@ -54,7 +51,7 @@ void Shell::Environment_Variables() {
         return;
     }
 
-    for (wchar_t* e = envs; *e; e += wcslen(e) + 1) std::wcout << e << endl;
+    for (wchar_t* e = envs; *e; e += wcslen(e) + 1) wcout << e << endl;
 
     FreeEnvironmentStringsW(envs);
 }

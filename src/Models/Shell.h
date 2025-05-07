@@ -12,6 +12,11 @@ using std::pair;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
+using std::wstring;
+
+#ifndef pid_t
+#define pid_t long long  // process id
+#endif
 
 /**
  * @brief Shell object For COSC 439 Project
@@ -20,6 +25,12 @@ using std::vector;
 class Shell {
    private:
 #pragma region Command Functionality
+
+    /// @brief The current working directory
+    string _directory;
+
+    /// @brief wide string of current working directory
+    wstring _directoryW;
 
     /// @brief Default Commands; command names to the commandinfo
     /// @note all commands should be lowercase
@@ -33,7 +44,7 @@ class Shell {
    public:
     // Shell() = default;
 
-    /// @brief Deletes _commands pointers;
+    /// @brief Deletes anything dynamically alloced
     ~Shell();
 
     /// @brief CommandType using the string
@@ -50,8 +61,8 @@ class Shell {
     /// @note string should be sanitized
     CommandInfo GetCommandInfo(const string&);
     CommandInfo operator[](const string& cmd) { return GetCommandInfo(cmd); }
-    CommandInfo operator[](CommandType cmd) {
-        for (const auto& command : Shell::COMMANDS)
+    CommandInfo operator[](const CommandType& cmd) {
+        for (const pair<string, CommandInfo>& command : Shell::COMMANDS)
             if (command.second.Type == cmd) return command.second;
 
         return CommandInfo(CommandType::INVALID);
@@ -83,7 +94,7 @@ class Shell {
      * PWD environment variable accordingly.
      * @return true if directory exists
      * */
-    void Change_Directory(string);
+    void Change_Directory(const string&);
 
     /** (cls)
      * clears the display screen. */
@@ -93,7 +104,7 @@ class Shell {
      * the contents of a specified directory.
      * @param directory The specified directory
      * */
-    void List_Directory_Contents(string);
+    void List_Directory_Contents(const string&);
 
     /** (environ)
      * displays all environment strings. */
@@ -125,16 +136,16 @@ class Shell {
 
     /** (chmod)
      * modifies file permissions for users, groups, and others. */
-    void File_Permissions(string);
+    void File_Permissions(const string&);
 
     /** (chown)
      * Changes the ownership of a file or directory, allowing a user to
      * specify the new owner and/or group. */
-    void Change_Ownership(string);
+    void Change_Ownership(const string&);
 
     /** (ls)
      * Display a list of files and directories in the current directory. */
-    void List_Files(string);
+    void List_Files();
 
     /** (pwd)
      * Print the current working directory to the standard output.  */
@@ -144,40 +155,40 @@ class Shell {
      * Read files sequentially and output their contents to the standard
      * output.
      */
-    void Concatenate_and_Display_Files(string);
+    void Concatenate_and_Display_Files(const vector<string>&);
 
     /** (mkdir)
      * Create one or more directories specified by the user. */
-    void Create_Directories(string);
+    void Create_Directories(const vector<string>&);
 
     /** (rmdir)
      * Remove one or more directories specified by the user */
-    void Remove_Directories(string);
+    void Remove_Directories(const vector<string>&);
 
     /** (rm)
      * Delete specified files or directories. */
-    void Remove_Files(vector<string>);
+    void Remove_Files(const vector<string>&);
 
     /** (cp)
      * copies files or directories from one location to another */
-    void Copy_Files(string);
+    void Copy_Files(const vector<string>&, const string&);
 
     /** (mv)
      * moves files or directories from one location to another */
-    void Move_Files(string);
+    void Move_Files(const vector<string>&);
 
     /** (touch)
      * creates empty files or updates access/modification times */
-    void Create_Empty_Files(string);
+    void Create_Empty_Files(const string&);
 
     /** (grep)
      * Search for specified patterns in files or input and display matching
      * lines. */
-    void Search_Text_Patterns(string);
+    void Search_Text_Patterns(const string&, const string&);
 
     /** (wc)
      * counts the number of lines, words, and characters in a file */
-    void Word_Count(string);
+    void Word_Count(const string&);
 #pragma endregion
 
     /** (execute)
@@ -188,7 +199,28 @@ class Shell {
      * @returns the process id of whatever process got executed;
      * @returns -1 if failed
      * */
-    int Execute(string name);
+    pid_t Execute(string name);
+
+    /// @returns the current directory wide string
+    /// @note if the current directory is not set then its set here
+    const wstring& Current_DirectoryW();
+
+    /// @returns the current directory
+    /// @note if the current directory is not set then its set here
+    const string& Current_Directory();
 };
+
+/// @brief Global Util Functions
+/// @note they work the same no matter the os
+namespace Util {
+
+    /// @param widestring
+    /// @returns wide string as a string
+    std::string ToString(const wstring& widestring) noexcept(true);
+
+    /// @param widechar
+    /// @returns wide char as a string
+    std::string ToString(const wchar_t* widechar) noexcept(true);
+}  // namespace Util
 
 #endif

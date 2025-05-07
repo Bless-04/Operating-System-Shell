@@ -1,6 +1,6 @@
 // for non windows
-#if defined(__APPLE__) || defined(__MACH__)
-#define OS "Apple Based OS"
+#if defined(__MACH__)
+#define OS "Mac OS"
 #elif defined(__unix__) || defined(__unix)
 #define OS "Unix Based OS"
 #endif
@@ -11,4 +11,9 @@
 #include "windows_Shell.cpp"
 #else
 #include "ubuntu_Shell.cpp"
+#endif
+
+// if os not defined
+#ifndef OS
+#define OS "[OS Undetected]"
 #endif
