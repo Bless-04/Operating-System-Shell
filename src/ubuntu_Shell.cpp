@@ -154,8 +154,7 @@ pid_t Shell::Execute(string name) {
 
         fprintf(stderr, "Failed to execute %s\n", name.c_str());
         exit(EXIT_FAILURE);
-    } else {
-        // Parent process
+    } else { /* parent process*/
         int status;
         waitpid(pid, &status, 0);
         cout << "Child process complete" << endl;
