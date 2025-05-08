@@ -93,7 +93,6 @@ class Shell {
      * directory.
      * @note Reports errors for non existing directories and updates the
      * PWD environment variable accordingly.
-     * @return true if directory exists
      * */
     void Change_Directory(const string&);
 
