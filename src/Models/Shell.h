@@ -105,7 +105,7 @@ class Shell {
      * the contents of a specified directory.
      * @param directory The specified directory
      * */
-    void List_Directory_Contents(const string&);
+    void List_Directory(const string&);
 
     /** (environ)
      * displays all environment strings. */
@@ -137,7 +137,7 @@ class Shell {
 
     /** (chmod)
      * modifies file permissions for users, groups, and others. */
-    void File_Permissions(const string&);
+    void Change_Mode(const string&);
 
     /** (chown)
      * Changes the ownership of a file or directory, allowing a user to
@@ -146,7 +146,7 @@ class Shell {
 
     /** (ls)
      * Display a list of files and directories in the current directory. */
-    void List_Files();
+    void List();
 
     /** (pwd)
      * Print the current working directory to the standard output.  */
@@ -156,11 +156,11 @@ class Shell {
      * Read files sequentially and output their contents to the standard
      * output.
      */
-    void Concatenate_and_Display_Files(const vector<string>&);
+    void Concatenate(const vector<string>&);
 
     /** (mkdir)
      * Create one or more directories specified by the user. */
-    void Create_Directories(const vector<string>&);
+    void Make_Directories(const vector<string>&);
 
     /** (rmdir)
      * Remove one or more directories specified by the user */
@@ -168,7 +168,7 @@ class Shell {
 
     /** (rm)
      * Delete specified files or directories. */
-    void Remove_Files(const vector<string>&);
+    void Remove(const vector<string>&);
 
     /** (cp)
      * copies files or directories from one location to another */
@@ -176,15 +176,17 @@ class Shell {
 
     /** (mv)
      * moves files or directories from one location to another */
-    void Move_Files(const vector<string>&);
+    void Move(const vector<string>&);
 
     /** (touch)
      * creates empty files or updates access/modification times */
-    void Create_Empty_Files(const string&);
+    void Create_Empty_Files(const vector<string>&);
 
     /** (grep)
      * Search for specified patterns in files or input and display matching
-     * lines. */
+     * lines.
+     * @note its just regex
+     * */
     void Search_Text_Patterns(const string&, const string&);
 
     /** (wc)

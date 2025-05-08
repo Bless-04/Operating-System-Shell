@@ -76,7 +76,7 @@ CommandInfo TryExecute(const string& input, Shell& shell) {
             shell.Clear_Screen();
             break;
         case DIR:
-            // shell.List_Directory_Contents(input.substr(4));
+            shell.List_Directory(args[1]);
             break;
         case ENVIRON:
             shell.Environment_Variables();
@@ -96,28 +96,30 @@ CommandInfo TryExecute(const string& input, Shell& shell) {
             shell.Quit();
             break;
         case CHMOD:
-            // shell.File_Permissions(input.substr(7));
+            shell.Change_Mode(input.substr(7));
             break;
         case CHOWN:
-            // shell.File_Permissions();
+            // shell.Change_Ownership();
             break;
         case LS:
-            shell.List_Files();
+            shell.List();
             break;
         case PWD:
             shell.Print_Working_Directory();
             break;
         case CAT:
-            // shell.Concatenate_File(input.substr(4));
+            //  shell.Concatenate(input.substr(4));
             break;
         case MKDIR:
-            // shell.Create_Directories();
+            shell.Make_Directories(
+                vector<string>(args.begin() + 1, args.end()));
             break;
         case RMDIR:
-            // shell.Remove_Directories(args[1]);
+
+            // shell.Remove_Directories();
             break;
         case RM:
-            // shell.Remove_Files(args[1]);
+            // shell.Remove(args[1]);
             break;
         case CP:
             // shell.Copy_File(args[1], args[2]);

@@ -39,47 +39,11 @@ void Shell::Change_Directory(const string& path) {
 // 2. clear
 
 #pragma region 3. dir
-
-#pragma endregion
-
-#pragma region 4. env
-void Shell::Environment_Variables() {
-    wchar_t* envs = (wchar_t*)GetEnvironmentStringsW();
-    if (envs == NULL) {
-        perror("Failed to Get Environment Strings.");
-        return;
-    }
-
-    for (wchar_t* e = envs; *e; e += wcslen(e) + 1) std::wcout << e << endl;
-
-    FreeEnvironmentStringsW(envs);
-}
-#pragma endregion
-
-// 5. echo
-// 6. help
-// 7. pause
-// 8. quit
-
-#pragma region 9. chmod
-void Shell::File_Permissions(const string& perms) {
-    cout << "Windows Displayed file permissions" << perms << endl;
-}
-#pragma endregion
-
-#pragma region 10. chown
-void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
-    cout << "Windows Displayed file owner" << owner << endl;
-}
-#pragma endregion
-
-#pragma region 11. ls
-void Shell::List_Files() {
+void Shell::List_Directory(const string& PATH = string()) {
     _WIN32_FIND_DATAA data;
     HANDLE hFind;
 
-    string path = this->_directory;
-
+    string path = (PATH.empty() ? this->_directory : PATH);
     path.append("\\*");
 
     hFind = FindFirstFileA(path.c_str(), &data);
@@ -105,19 +69,52 @@ void Shell::List_Files() {
 
     FindClose(hFind);
 }
+
 #pragma endregion
 
+#pragma region 4. env
+void Shell::Environment_Variables() {
+    wchar_t* envs = (wchar_t*)GetEnvironmentStringsW();
+    if (envs == NULL) {
+        perror("Failed to Get Environment Strings.");
+        return;
+    }
+
+    for (wchar_t* e = envs; *e; e += wcslen(e) + 1) std::wcout << e << endl;
+
+    FreeEnvironmentStringsW(envs);
+}
+#pragma endregion
+
+// 5. echo
+// 6. help
+// 7. pause
+// 8. quit
+
+#pragma region 9. chmod
+void Shell::Change_Mode(const string& perms) {
+    cout << "Windows Displayed file permissions" << perms << endl;
+}
+#pragma endregion
+
+#pragma region 10. chown
+void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
+    cout << "Windows Displayed file owner" << owner << endl;
+}
+#pragma endregion
+
+// 11. ls
 // 12. pwd
 
 #pragma region 13. cat
-void Shell::Concatenate_and_Display_Files(const vector<string>& files) {
+void Shell::Concatenate(const vector<string>& files) {
     cout << "Windows Displayed file" << files[0] << endl;
 }
 #pragma endregion
 
 #pragma region 14. mkdir
 
-void Shell::Create_Directories(const vector<string>& directories) {
+void Shell::Make_Directories(const vector<string>& directories) {
     cout << "Windows Created directory" << directories[0] << endl;
 }
 #pragma endregion
@@ -130,7 +127,7 @@ void Shell::Remove_Directories(const vector<string>& directories) {
 #pragma endregion
 
 #pragma region 16. Remove Files (rm)
-void Shell::Remove_Files(const vector<string>& files) {
+void Shell::Remove(const vector<string>& files) {
     cout << "Windows Removed file" << files[0] << endl;
 }
 #pragma endregion
@@ -142,13 +139,13 @@ void Shell::Copy_Files(const vector<string>& files, const string& dest) {
 #pragma endregion
 
 #pragma region 18. Move Files (mv)
-void Shell::Move_Files(const vector<string>& files) {
+void Shell::Move(const vector<string>& files) {
     cout << "Windows Moved file" << endl;
 }
 #pragma endregion
 
 #pragma region 19. Create (touch)
-void Shell::Create_Empty_Files(const string& file) {
+void Shell::Create_Empty_Files(const vector<string>& files) {
     cout << "Windows Created file" << endl;
 }
 #pragma endregion

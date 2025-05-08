@@ -109,7 +109,10 @@ void Shell::Quit() { exit(0); }
 #pragma endregion
 
 #pragma region 9. chmod
+#pragma endregion
 
+#pragma region 11. ls just uses List_directory
+void Shell::List() { this->List_Directory(this->_directory); }
 #pragma endregion
 
 #pragma region 12. pwd

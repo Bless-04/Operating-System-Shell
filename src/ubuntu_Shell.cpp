@@ -25,6 +25,7 @@ void Shell::Change_Directory(const string& path) {
 // 2. clear
 
 #pragma region 3. dir
+void Shell::List_Directory(const string&) {}
 
 #pragma endregion
 
@@ -43,7 +44,7 @@ void Shell::Environment_Variables() {
 // 8. quit
 
 #pragma region 9. chmod
-void Shell::File_Permissions(const string& perms) {}
+void Shell::Change_Mode(const string& perms) {}
 #pragma endregion
 
 #pragma region 10. chown
@@ -61,19 +62,16 @@ void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
 }
 #pragma endregion
 
-#pragma region 11. ls
-void Shell::List_Files() {}
-#pragma endregion
-
+// 11. ls
 // 12. pwd
 
 #pragma region 13. cat
-void Shell::Concatenate_and_Display_Files(const vector<string>& files) {}
+void Shell::Concatenate(const vector<string>& files) {}
 #pragma endregion
 
 #pragma region 14. mkdir
 
-void Shell::Create_Directories(const vector<string>& directories) {
+void Shell::Make_Directories(const vector<string>& directories) {
     cout << "Windows Created directory" << directories[0] << endl;
 }
 #pragma endregion
@@ -84,7 +82,7 @@ void Shell::Remove_Directories(const vector<string>& directories) {}
 #pragma endregion
 
 #pragma region 16. Remove Files (rm)
-void Shell::Remove_Files(const vector<string>& files) {}
+void Shell::Remove(const vector<string>& files) {}
 #pragma endregion
 
 #pragma region 17. Copy Files (cp)
@@ -92,11 +90,19 @@ void Shell::Copy_Files(const vector<string>& files, const string& dest) {}
 #pragma endregion
 
 #pragma region 18. Move Files (mv)
-void Shell::Move_Files(const vector<string>& files) {}
+void Shell::Move(const vector<string>& files) {}
 #pragma endregion
 
 #pragma region 19. Create (touch)
-void Shell::Create_Empty_Files(const string& file) {}
+void Shell::Create_Empty_Files(const vector<string>& files) {
+    for (size_t i = 1; i < files.size(); ++i) {
+        int fd = open(files[i].c_str(), O_CREAT | O_WRONLY, 0644);
+        if (fd == -1)
+            perror("touch failed");
+        else
+            close(fd);
+    }
+}
 #pragma endregion
 
 #pragma region 20. search text patterns (grep)
