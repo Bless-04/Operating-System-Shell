@@ -17,38 +17,41 @@ using std::endl;
 
 Shell::Shell() {
     Update_Directory();
-    // for extra mappings
-    CommandInfo* cmd_ptr = &(COMMANDS.at("help"));
-    _commands["?"] = cmd_ptr;
-    _commands["info"] = cmd_ptr;
 
-    cmd_ptr = &COMMANDS.at("clr");
-    _commands["clear"] = cmd_ptr;
-    _commands["cls"] = cmd_ptr;
+    // command pointer for extra mapping
+    CommandInfo* c = &(COMMANDS.at("help"));
+    _commands["?"] = c;
+    _commands["info"] = c;
+    _commands["cmds"] = c;
+    _commands["commands"] = c;
+
+    c = &COMMANDS.at("clr");
+    _commands["clear"] = c;
+    _commands["cls"] = c;
 
     _commands["env"] = &(COMMANDS.at("environ"));
 
-    cmd_ptr = &COMMANDS.at("mv");
-    _commands["move"] = cmd_ptr;
-    _commands["copy"] = cmd_ptr;
+    c = &COMMANDS.at("mv");
+    _commands["move"] = c;
+    _commands["copy"] = c;
 
-    cmd_ptr = &COMMANDS.at("rm");
-    _commands["remove"] = cmd_ptr;
-    _commands["delete"] = cmd_ptr;
-    _commands["del"] = cmd_ptr;
+    c = &COMMANDS.at("rm");
+    _commands["remove"] = c;
+    _commands["delete"] = c;
+    _commands["del"] = c;
 
-    cmd_ptr = &COMMANDS.at("echo");
-    _commands["print"] = cmd_ptr;
-    _commands["show"] = cmd_ptr;
-    _commands["display"] = cmd_ptr;
+    c = &COMMANDS.at("echo");
+    _commands["print"] = c;
+    _commands["show"] = c;
+    _commands["display"] = c;
 
-    cmd_ptr = &COMMANDS.at("quit");
-    _commands["exit"] = cmd_ptr;
-    _commands["q"] = cmd_ptr;
-    _commands["leave"] = cmd_ptr;
-    _commands["close"] = cmd_ptr;
-    _commands["end"] = cmd_ptr;
-    _commands["stop"] = cmd_ptr;
+    c = &COMMANDS.at("quit");
+    _commands["exit"] = c;
+    _commands["q"] = c;
+    _commands["leave"] = c;
+    _commands["close"] = c;
+    _commands["end"] = c;
+    _commands["stop"] = c;
 };
 
 Shell::~Shell() { _commands.clear(); }
