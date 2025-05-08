@@ -12,7 +12,7 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: Shell Compilation (ubuntu)
-              run: g++ -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
+              run: g++ -Wall -Wextra -fdiagnostics-color=always 439shell.cpp -o ./439shell
 
     Windows-Compilation:
         name: Compile On Windows
@@ -20,7 +20,7 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: Shell Compilation (windows)
-              run: g++ -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
+              run: g++ -Wall -Wextra -fdiagnostics-color=always 439shell.cpp -o ./439shell
 
     MacOS-Compilation:
         name: Compile On MacOS
@@ -28,4 +28,4 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: Shell Compilation (macOS)
-              run: clang++ -std=c++11 -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
+              run: clang++ -std=c++11 -Wall -Wextra -fdiagnostics-color=always 439shell.cpp -o ./439shell
