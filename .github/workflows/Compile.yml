@@ -28,4 +28,4 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: Shell Compilation (macOS)
-              run: g++ -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
+              run: clang++ -std=c++17 -Wall -Wextra -fdiagnostics-color=always main.cpp -o ./main
