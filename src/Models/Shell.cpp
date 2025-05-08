@@ -112,6 +112,10 @@ void Shell::Quit() { exit(0); }
 
 #pragma endregion
 
+#pragma region 12. pwd
+void Shell::Print_Working_Directory() { cout << this->_directory << endl; }
+#pragma endregion
+
 #pragma region Command
 CommandType Shell::GetCommandType(const string& cmd) {
     return GetCommandInfo(cmd).Type;

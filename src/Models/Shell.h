@@ -141,7 +141,7 @@ class Shell {
     /** (chown)
      * Changes the ownership of a file or directory, allowing a user to
      * specify the new owner and/or group. */
-    void Change_Ownership(const string&);
+    void Change_Ownership(const string&, const vector<string>& paths);
 
     /** (ls)
      * Display a list of files and directories in the current directory. */

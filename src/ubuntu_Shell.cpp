@@ -13,7 +13,7 @@ bool Shell::Update_Directory() noexcept {
 
     this->_directory = buffer;
 
-    return true
+    return true;
 }
 
 #pragma region 1. cd
@@ -42,17 +42,17 @@ void Shell::File_Permissions(const string& perms) {}
 #pragma endregion
 
 #pragma region 10. chown
-void Shell::Change_Ownership(const string& owner) {
-    struct passwd* pw = getpwnam(args[1].c_str());
+void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
+    // todo: chown
+    struct passwd* pw = getpwnam(owner.c_str());
     if (!pw) {
         perror("Failed to change ownership");
         return;
     }
-    for (size_t i = 2; i < args.size(); ++i) {
-        if (chown(args[i].c_str(), pw->pw_uid, pw->pw_gid) != 0) {
+
+    for (const string& path : paths)
+        if (chown(path.c_str(), pw->pw_uid, pw->pw_gid) != 0)
             perror("chown failed");
-        }
-    }
 }
 #pragma endregion
 
@@ -60,11 +60,7 @@ void Shell::Change_Ownership(const string& owner) {
 void Shell::List_Files() {}
 #pragma endregion
 
-#pragma region 12. pwd
-void Shell::Print_Working_Directory() {
-    cout << this->Current_Directory() << endl;
-}
-#pragma endregion
+// 12. pwd
 
 #pragma region 13. cat
 void Shell::Concatenate_and_Display_Files(const vector<string>& files) {}

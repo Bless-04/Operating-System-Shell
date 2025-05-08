@@ -63,7 +63,7 @@ void Shell::File_Permissions(const string& perms) {
 #pragma endregion
 
 #pragma region 10. chown
-void Shell::Change_Ownership(const string& owner) {
+void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
     cout << "Windows Displayed file owner" << owner << endl;
 }
 #pragma endregion
@@ -100,10 +100,6 @@ void Shell::List_Files() {
 
     FindClose(hFind);
 }
-#pragma endregion
-
-#pragma region 12. pwd
-void Shell::Print_Working_Directory() { cout << this->_directory << endl; }
 #pragma endregion
 
 #pragma region 13. cat
