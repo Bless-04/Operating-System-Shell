@@ -143,19 +143,23 @@ void Shell::Word_Count(const string& file) {
 pid_t Shell::Execute(string name) {
     /** chapter 3 */
 
-    /** Fork A child process */
     pid_t pid = fork();
 
     if (pid < 0) {
-        fprintf(stderr, "Fork Failed");
-        return 1;
-    } else if (pid == 0) {  // child process
-        execlp("/bin/ls", "ls", NULL);
-    } else { /** parent process */
-        wait(NULL);
-        cout << "Child Process Complete" << endl;
-    }
+        perror("Fork failed");
+        return -1;
+    } else if (pid == 0) {
+        // Child process
+        execlp(name.c_str(), name.c_str(), NULL);
 
-    return 0;
+        fprintf(stderr, "Failed to execute %s\n", name.c_str());
+        exit(EXIT_FAILURE);
+    } else {
+        // Parent process
+        int status;
+        waitpid(pid, &status, 0);
+        cout << "Child process complete" << endl;
+        return pid;
+    }
 }
 #pragma endregion
