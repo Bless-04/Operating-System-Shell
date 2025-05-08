@@ -26,7 +26,10 @@ int main(int argc, char** argv) {
             cmd = TryExecute(argv[1], shell);
         else
             cmd = TryExecute(argv, argc, shell);
-        exit(0);
+
+        if (cmd.Type == INVALID) exit(1);
+
+        (exit(0));
     }
 
     while (cmd.Type != QUIT) {
