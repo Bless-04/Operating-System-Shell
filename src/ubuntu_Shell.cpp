@@ -37,6 +37,11 @@ void Shell::Environment_Variables() {
 }
 #pragma endregion
 
+// 5. echo
+// 6. help
+// 7. pause
+// 8. quit
+
 #pragma region 9. chmod
 void Shell::File_Permissions(const string& perms) {}
 #pragma endregion
@@ -101,6 +106,25 @@ void Shell::Search_Text_Patterns(const string& pattern, const string& file) {}
 #pragma region 21. word count (wc)
 void Shell::Word_Count(const string& file) {
     size_t lines = 0, words = 0, chars = 0;
+
+    int fd = open(file.c_str(), O_RDONLY);
+    if (fd < 0) {
+        perror("Failed to open file");
+        return;
+    }
+
+    char buffer[1024];
+    ssize_t bytesRead;
+
+    while ((bytesRead = read(fd, buffer, sizeof(buffer))) > 0) {
+        write(STDOUT_FILENO, buffer, bytesRead);
+        for (const char& c : buffer) {
+            if (c == '\n') ++lines;
+            if (c == ' ') ++words;
+            ++chars;
+        }
+    }
+    close(fd);
 
     cout << file << endl;
     cout << "lines: " << lines << endl;

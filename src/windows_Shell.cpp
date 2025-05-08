@@ -56,6 +56,11 @@ void Shell::Environment_Variables() {
 }
 #pragma endregion
 
+// 5. echo
+// 6. help
+// 7. pause
+// 8. quit
+
 #pragma region 9. chmod
 void Shell::File_Permissions(const string& perms) {
     cout << "Windows Displayed file permissions" << perms << endl;
@@ -101,6 +106,8 @@ void Shell::List_Files() {
     FindClose(hFind);
 }
 #pragma endregion
+
+// 12. pwd
 
 #pragma region 13. cat
 void Shell::Concatenate_and_Display_Files(const vector<string>& files) {
