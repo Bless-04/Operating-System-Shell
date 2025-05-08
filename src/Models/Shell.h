@@ -8,7 +8,6 @@
 
 #include "CommandInfo.h"
 
-using std::pair;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -63,7 +62,7 @@ class Shell {
     CommandInfo GetCommandInfo(const string&);
     CommandInfo operator[](const string& cmd) { return GetCommandInfo(cmd); }
     CommandInfo operator[](const CommandType& cmd) {
-        for (const pair<string, CommandInfo>& command : Shell::COMMANDS)
+        for (const auto& command : Shell::COMMANDS)
             if (command.second.Type == cmd) return command.second;
         return CommandInfo(CommandType::INVALID);
     }
