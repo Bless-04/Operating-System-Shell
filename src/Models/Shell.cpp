@@ -13,7 +13,6 @@
 using std::cin;
 using std::cout;
 using std::endl;
-using std::pair;
 #pragma region Command Mappings
 
 Shell::Shell() {
@@ -71,17 +70,17 @@ void Shell::Echo(const string& text) {
 
 #pragma region 6. help
 void Shell::Help() {
-    vector<pair<string, CommandInfo>> sorted;  // commands sorted by commandtype
+    vector<std::pair<string, CommandInfo> >
+        sorted;  // commands sorted by commandtype
     sorted.reserve(Shell::COMMANDS.size());
 
     cout << "Default Commands:" << endl;
-    for (pair<const string, CommandInfo>& cmd : Shell::COMMANDS)
-        sorted.push_back(cmd);
+    for (const auto& cmd : Shell::COMMANDS) sorted.push_back(cmd);
 
     sort(sorted.begin(), sorted.end(),
          [](auto& a, auto& b) { return a.second.Type < b.second.Type; });
 
-    for (pair<string, CommandInfo>& cmd : sorted)
+    for (const auto& cmd : sorted)
         cout << cmd.first << "\t\t" << cmd.second.Description << endl;
 
     /*
@@ -91,8 +90,9 @@ for (auto& cmd : _commands)
     */
 }
 
+/*
 void Shell::Help(const CommandType& type, const string& example) {}
-
+*/
 #pragma endregion
 
 #pragma region 7. pause
