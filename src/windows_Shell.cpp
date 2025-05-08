@@ -39,7 +39,7 @@ void Shell::Change_Directory(const string& path) {
 // 2. clear
 
 #pragma region 3. dir
-void Shell::List_Directory(const string& PATH = string()) {
+void Shell::List_Directory(const string& PATH) {
     _WIN32_FIND_DATAA data;
     HANDLE hFind;
 
