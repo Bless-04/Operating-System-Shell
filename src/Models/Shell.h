@@ -201,7 +201,7 @@ class Shell {
      * @returns the process id of whatever process got executed;
      * @returns -1 if failed
      * */
-    pid_t Execute(string name);
+    pid_t Execute(const string& name);
 };
 
 /// @brief Global Util Functions

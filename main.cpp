@@ -8,13 +8,26 @@ using std::stringstream;
 
 vector<string> SplitString(const string&, char);
 CommandInfo TryExecute(const string&, Shell&);
+CommandInfo TryExecute(vector<string>&, Shell&);
+CommandInfo TryExecute(char**, const int, Shell&);
 
-int main() {
+/// @brief takes command line args
+/// @return
+int main(int argc, char** argv) {
     CommandInfo cmd;
     string input;
     Shell shell;
 
     cout << "COSC 439 Shell (" << OS << ")" << endl;
+
+    // if run from command line with args
+    if (argc > 1) {
+        if (argc == 2)
+            cmd = TryExecute(argv[1], shell);
+        else
+            cmd = TryExecute(argv, argc, shell);
+        exit(0);
+    }
 
     while (cmd.Type != QUIT) {
         cout << endl;
@@ -54,18 +67,13 @@ void DeleteStartingSpaces(vector<string>& args) {
         args.erase(args.begin());
 }
 
-/// @brief trys to run a shell command
-/// @param input string input
-/// @param shell the shell to use
-/// @return CommandInfo of the command executed
-CommandInfo TryExecute(const string& input, Shell& shell) {
-    vector<string> args = SplitString(input, ' ');
-
-    DeleteStartingSpaces(args);
-
+/// @brief try execute with vector
+/// @param args raw args
+/// @param shell
+/// @return command info
+CommandInfo TryExecute(vector<string>& args, Shell& shell) {
     string text;
     CommandInfo cmd_info = shell.GetCommandType(Shell::SanitizeString(args[0]));
-
     /// @note to guarantee no segfault for things that need arg[1]
     if (args.size() == 1) args.push_back(string());
 
@@ -97,7 +105,7 @@ CommandInfo TryExecute(const string& input, Shell& shell) {
             shell.Quit();
             break;
         case CHMOD:
-            shell.Change_Mode(input.substr(7));
+            // shell.Change_Mode(input.substr(7));
             break;
         case CHOWN:
             // shell.Change_Ownership();
@@ -139,18 +147,47 @@ CommandInfo TryExecute(const string& input, Shell& shell) {
             break;
 
         default:
-        case INVALID:
-
-            pid_t pid = shell.Execute(input);
-            if (pid == -1)
-                fprintf(stderr,
-                        "'%s' is not an existing command, operable program or "
-                        "batch file\n",
-                        args[0].c_str());
-            else
-                cout << "Process started with PID: " << pid << endl;
-            break;
+            return INVALID;
     }
 
     return cmd_info;
+}
+
+/// @brief
+/// @param c_args // command line args
+/// @param argc
+/// @param shell
+/// @note exists to make running from command line easier
+/// @return
+CommandInfo TryExecute(char** c_args, const int argc, Shell& shell) {
+    vector<string> v_args = vector<string>(argc);
+
+    for (int i = 1; i < argc; ++i) v_args[i - 1] = string(c_args[i]);
+
+    return TryExecute(v_args, shell);
+}
+
+/// @brief trys to run a shell command
+/// @param input string input
+/// @param shell the shell to use
+/// @return CommandInfo of the command executed
+CommandInfo TryExecute(const string& input, Shell& shell) {
+    vector<string> args = SplitString(input, ' ');
+
+    DeleteStartingSpaces(args);
+
+    const CommandInfo& info = TryExecute(args, shell);
+
+    if (info.Type == INVALID) {
+        pid_t pid = shell.Execute(input);
+        if (pid == -1)
+            fprintf(stderr,
+                    "'%s' is not an existing command, operable program or "
+                    "batch file\n",
+                    args[0].c_str());
+        else
+            printf("Finished Process '%s' with PID: %lld\n", args[0].c_str(),
+                   pid);
+    }
+    return info;
 }

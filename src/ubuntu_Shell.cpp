@@ -140,7 +140,7 @@ void Shell::Word_Count(const string& file) {
 #pragma endregion
 
 #pragma region Execution / Starting Process
-pid_t Shell::Execute(string name) {
+pid_t Shell::Execute(const string& name) {
     /** chapter 3 */
 
     pid_t pid = fork();
@@ -157,8 +157,9 @@ pid_t Shell::Execute(string name) {
     } else { /* parent process*/
         int status;
         waitpid(pid, &status, 0);
-        cout << "Child process complete" << endl;
         return pid;
     }
+
+    return pid;
 }
 #pragma endregion

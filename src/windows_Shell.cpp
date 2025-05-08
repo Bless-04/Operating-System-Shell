@@ -168,7 +168,7 @@ void Shell::Word_Count(const string& file) {
 #pragma endregion
 
 #pragma region Execution / Starting Process
-pid_t Shell::Execute(string name) {
+pid_t Shell::Execute(const string& name) {
     STARTUPINFOA s_info = STARTUPINFOA();
     PROCESS_INFORMATION p_info = PROCESS_INFORMATION();
 
@@ -176,11 +176,14 @@ pid_t Shell::Execute(string name) {
                         0, nullptr, nullptr, &s_info, &p_info))
         return -1;
 
+    pid_t pid = p_info.dwProcessId;
+    printf("Started Process '%s' with PID: %lld\n", name.c_str(), pid);
+
     WaitForSingleObject(p_info.hProcess, INFINITE);
 
     CloseHandle(p_info.hProcess);
     CloseHandle(p_info.hThread);
 
-    return p_info.dwProcessId;
+    return pid;
 }
 #pragma endregion
