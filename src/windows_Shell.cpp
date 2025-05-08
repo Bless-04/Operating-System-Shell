@@ -48,10 +48,9 @@ void Shell::List_Directory(const string& PATH = string()) {
 
     hFind = FindFirstFileA(path.c_str(), &data);
 
-    /// @note its char* instead of string so it works with both cout and wcout
     const char* TAB2 = "\t\t";
     if (hFind == INVALID_HANDLE_VALUE) {
-        perror("Could Not find files");
+        perror("Could Not find anything at the given path.");
         return;
     }
 
