@@ -172,7 +172,7 @@ class Shell {
 
     /** (cp)
      * copies files or directories from one location to another */
-    void Copy_Files(const vector<string>&, const string&);
+    void Copy(const vector<string>&, const string&);
 
     /** (mv)
      * moves files or directories from one location to another */

@@ -86,7 +86,7 @@ void Shell::Remove(const vector<string>& files) {}
 #pragma endregion
 
 #pragma region 17. Copy Files (cp)
-void Shell::Copy_Files(const vector<string>& files, const string& dest) {}
+void Shell::Copy(const vector<string>& files, const string& dest) {}
 #pragma endregion
 
 #pragma region 18. Move Files (mv)
