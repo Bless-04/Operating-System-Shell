@@ -1,4 +1,5 @@
 /** For Defining Shell Functions that are windows specific */
+#include <direct.h>
 #include <ntdef.h>
 #include <ntstatus.h>
 #include <windows.system.h>
@@ -6,34 +7,32 @@
 
 #include "Models/Shell.cpp"  //shell.cpp later
 
-const wstring& Shell::Current_DirectoryW() {
-    if (!this->_directoryW.empty()) return this->_directoryW;
-
-    const unsigned long length = GetCurrentDirectoryW(0, NULL);
+bool Shell::Update_Directory() noexcept {
+    const unsigned long length = GetCurrentDirectoryA(0, NULL);
     if (length == 0) {
         perror("Failed to get current directory.");
-        return this->_directoryW;
+        return false;
     }
 
-    wchar_t DIRECTORY[length];
-    GetCurrentDirectoryW(length, DIRECTORY);
+    char DIRECTORY[length];
+    GetCurrentDirectoryA(length, DIRECTORY);
 
-    return this->_directoryW = DIRECTORY;
-}
+    this->_directory = DIRECTORY;
 
-const string& Shell::Current_Directory() {
-    if (!this->_directory.empty()) return this->_directory;
-
-    this->Current_DirectoryW();  // updating directoryw
-    this->_directory =
-        string(this->_directoryW.begin(), this->_directoryW.end());
-
-    return this->_directory;
+    return true;
 }
 
 #pragma region 1. cd
 void Shell::Change_Directory(const string& path) {
-    cout << "Windows Changed directory to " << path << endl;
+    if (path.empty()) {
+        cout << this->_directory << endl;
+        return;
+    }
+
+    if (!SetCurrentDirectoryA(path.c_str()))
+        perror("Failed to change directory.");
+
+    this->Update_Directory();
 }
 #pragma endregion
 
@@ -51,7 +50,7 @@ void Shell::Environment_Variables() {
         return;
     }
 
-    for (wchar_t* e = envs; *e; e += wcslen(e) + 1) wcout << e << endl;
+    for (wchar_t* e = envs; *e; e += wcslen(e) + 1) std::wcout << e << endl;
 
     FreeEnvironmentStringsW(envs);
 }
@@ -71,13 +70,14 @@ void Shell::Change_Ownership(const string& owner) {
 
 #pragma region 11. ls
 void Shell::List_Files() {
-    _WIN32_FIND_DATAW data;
+    _WIN32_FIND_DATAA data;
     HANDLE hFind;
 
-    wstring path = this->Current_DirectoryW();
-    path.append(L"\\*");
+    string path = this->_directory;
 
-    hFind = FindFirstFileW(path.c_str(), &data);
+    path.append("\\*");
+
+    hFind = FindFirstFileA(path.c_str(), &data);
 
     /// @note its char* instead of string so it works with both cout and wcout
     const char* TAB2 = "\t\t";
@@ -92,8 +92,8 @@ void Shell::List_Files() {
         cout << ((flags & FILE_ATTRIBUTE_DIRECTORY) ? "<DIR>\t" : "\t");
 
         cout << data.nFileSizeLow << "\tbytes";
-        wcout << TAB2 << data.cFileName << endl;
-    } while (FindNextFileW(hFind, &data) != 0);
+        cout << TAB2 << data.cFileName << endl;
+    } while (FindNextFileA(hFind, &data) != 0);
 
     if (GetLastError() != ERROR_NO_MORE_FILES)
         perror("Failed to get the next file");
@@ -103,9 +103,7 @@ void Shell::List_Files() {
 #pragma endregion
 
 #pragma region 12. pwd
-void Shell::Print_Working_Directory() {
-    cout << this->Current_Directory() << endl;
-}
+void Shell::Print_Working_Directory() { cout << this->_directory << endl; }
 #pragma endregion
 
 #pragma region 13. cat

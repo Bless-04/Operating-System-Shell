@@ -12,7 +12,6 @@ using std::pair;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
-using std::wstring;
 
 #ifndef pid_t
 #define pid_t long long  // process id
@@ -29,8 +28,10 @@ class Shell {
     /// @brief The current working directory
     string _directory;
 
-    /// @brief wide string of current working directory
-    wstring _directoryW;
+    /// @brief Updates the shell directory variable
+    /// @return True if the directory was updated
+    /// @note use for stuff that change directory
+    bool Update_Directory() noexcept;
 
     /// @brief Default Commands; command names to the commandinfo
     /// @note all commands should be lowercase
@@ -64,7 +65,6 @@ class Shell {
     CommandInfo operator[](const CommandType& cmd) {
         for (const pair<string, CommandInfo>& command : Shell::COMMANDS)
             if (command.second.Type == cmd) return command.second;
-
         return CommandInfo(CommandType::INVALID);
     }
     /// @brief sanitizes the input string by removing spaces and converting to
@@ -200,27 +200,16 @@ class Shell {
      * @returns -1 if failed
      * */
     pid_t Execute(string name);
-
-    /// @returns the current directory wide string
-    /// @note if the current directory is not set then its set here
-    const wstring& Current_DirectoryW();
-
-    /// @returns the current directory
-    /// @note if the current directory is not set then its set here
-    const string& Current_Directory();
 };
 
 /// @brief Global Util Functions
 /// @note they work the same no matter the os
 namespace Util {
 
-    /// @param widestring
-    /// @returns wide string as a string
-    std::string ToString(const wstring& widestring) noexcept(true);
-
     /// @param widechar
     /// @returns wide char as a string
-    std::string ToString(const wchar_t* widechar) noexcept(true);
+    std::string ToString(const wchar_t* widechar) noexcept;
+
 }  // namespace Util
 
 #endif

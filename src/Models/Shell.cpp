@@ -14,10 +14,10 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::pair;
-using std::wcout;
 #pragma region Command Mappings
 
 Shell::Shell() {
+    Update_Directory();
     // for extra mappings
     CommandInfo* cmd_ptr = &(COMMANDS.at("help"));
     _commands["?"] = cmd_ptr;
@@ -170,12 +170,8 @@ string Shell::SanitizeString(const string& input,
 
 #pragma endregion
 
-std::string Util::ToString(const wstring& widestring) noexcept(true) {
-    if (widestring.empty()) return string();
-    return string(widestring.begin(), widestring.end());
-}
-
-std::string Util::ToString(const wchar_t* widechar) noexcept(true) {
+string Util::ToString(const wchar_t* widechar) noexcept {
     if (widechar == NULL || widechar == nullptr) return string();
-    return ToString(wstring(widechar, wcslen(widechar)));
+    std::wstring wstr(widechar, widechar + wcslen(widechar) + 1);
+    return string(wstr.begin(), wstr.end());
 }

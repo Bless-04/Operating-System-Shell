@@ -15,17 +15,17 @@ int main() {
     Shell shell;
 
     cout << "COSC 439 Shell (" << OS << ")" << endl;
-    shell.List_Files();
-    /*
+
     while (cmd.Type != QUIT) {
-        cout << endl << shell.Current_Directory() << endl << ">> ";
+        shell.Print_Working_Directory();
+        cout << ">> ";
         getline(cin, input);
 
         if (input.empty()) continue;  // skip empty
 
         cmd = TryExecute(input, shell);
     }
-        */
+
     // shell.Help(CommandType::cd, "help <command>");
 }
 
@@ -61,13 +61,16 @@ CommandInfo TryExecute(const string& input, Shell& shell) {
     vector<string> args = SplitString(input, ' ');
 
     DeleteStartingSpaces(args);
-    args.shrink_to_fit();
 
     string text;
     CommandInfo cmd_info = shell.GetCommandType(Shell::SanitizeString(args[0]));
 
+    /// @note to guarantee no segfault for things that need arg[1]
+    if (args.size() == 1) args.push_back(string());
+
     switch (cmd_info.Type) {
         case CD:
+            shell.Change_Directory(args[1]);
             break;
         case CLR:
             shell.Clear_Screen();
@@ -139,7 +142,7 @@ CommandInfo TryExecute(const string& input, Shell& shell) {
             if (pid == -1)
                 fprintf(stderr,
                         "'%s' is not an existing command, operable program or "
-                        "batch file",
+                        "batch file\n",
                         args[0].c_str());
             else
                 cout << "Process started with PID: " << pid << endl;
