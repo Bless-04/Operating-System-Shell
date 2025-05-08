@@ -77,8 +77,12 @@ void Shell::Help() {
     cout << "Default Commands:" << endl;
     for (const auto& cmd : Shell::COMMANDS) sorted.push_back(cmd);
 
+    // auto isnt allowed in lambdas for cpp 11
     sort(sorted.begin(), sorted.end(),
-         [](auto& a, auto& b) { return a.second.Type < b.second.Type; });
+         [](std::pair<string, CommandInfo>& a,
+            std::pair<string, CommandInfo>& b) {
+             return a.second.Type < b.second.Type;
+         });
 
     for (const auto& cmd : sorted)
         cout << cmd.first << "\t\t" << cmd.second.Description << endl;
