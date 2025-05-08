@@ -1,5 +1,5 @@
 #This tests that shell builds on multiple platforms
-name: Build CrossPlatform 
+name: Build Cross-Platform
 
 on:
     push:
