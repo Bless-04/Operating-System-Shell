@@ -50,7 +50,8 @@ void Shell::List_Directory(const string& PATH = string()) {
 
     const char* TAB2 = "\t\t";
     if (hFind == INVALID_HANDLE_VALUE) {
-        perror("Could Not find anything at the given path.");
+        fprintf(stderr, ("Failed to read data in directory: %s\n"),
+                path.c_str());
         return;
     }
 

@@ -17,6 +17,7 @@ int main() {
     cout << "COSC 439 Shell (" << OS << ")" << endl;
 
     while (cmd.Type != QUIT) {
+        cout << endl;
         shell.Print_Working_Directory();
         cout << ">> ";
         getline(cin, input);
