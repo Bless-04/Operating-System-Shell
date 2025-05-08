@@ -15,7 +15,7 @@ struct CommandInfo {
 
     CommandInfo() : Type(CommandType::INVALID) {}
 
-    CommandInfo(CommandType type, string description = "")
+    CommandInfo(CommandType type, string description = string())
         : Type(type), Description(description) {}
 };
 #endif
