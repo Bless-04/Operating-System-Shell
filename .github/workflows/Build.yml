@@ -13,10 +13,6 @@ jobs:
             - uses: actions/checkout@v4
             - name: Shell Compilation (ubuntu)
               run: g++ -Wall -Wextra -fdiagnostics-color=always 439shell.cpp -o ./439shell
-            - name: Upload Artifact (Ubuntu)
-              uses: actions/upload-artifact@v3
-              with:
-                  name: ubuntu-439shell
 
     Windows-Compilation:
         name: Compile On Windows
