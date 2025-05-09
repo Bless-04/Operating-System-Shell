@@ -13,13 +13,10 @@ jobs:
             - uses: actions/checkout@v4
             - name: Shell Compilation (ubuntu)
               run: g++ -Wall -Wextra -fdiagnostics-color=always 439shell.cpp -o ./439shell
-<<<<<<< HEAD
             - name: Upload Artifact (Ubuntu)
               uses: actions/upload-artifact@v3
               with:
                   name: ubuntu-439shell
-=======
->>>>>>> parent of 5cd657f (Update Build.yml)
 
     Windows-Compilation:
         name: Compile On Windows
