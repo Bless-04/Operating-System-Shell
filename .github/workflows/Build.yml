@@ -11,7 +11,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - name: Shell Compilation (ubuntu)
+            - name: Shell Compilation (Ubuntu)
               run: g++ -Wall -Wextra -fdiagnostics-color=always 439shell.cpp -o ./439shell
 
     Windows-Compilation:
@@ -19,7 +19,7 @@ jobs:
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v4
-            - name: Shell Compilation (windows)
+            - name: Shell Compilation (Windows)
               run: g++ -Wall -Wextra -fdiagnostics-color=always 439shell.cpp -o ./439shell
 
     MacOS-Compilation:
@@ -27,5 +27,5 @@ jobs:
         runs-on: macos-latest
         steps:
             - uses: actions/checkout@v4
-            - name: Shell Compilation (macOS)
+            - name: Shell Compilation (MacOS)
               run: clang++ -std=c++11 -Wall -Wextra -fdiagnostics-color=always 439shell.cpp -o ./439shell
