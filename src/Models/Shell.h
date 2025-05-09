@@ -43,6 +43,11 @@ class Shell {
     /// @note pointer to default commands for no copying
     unordered_map<string, CommandInfo*> _commands;
 
+    /// @brief maps a text to a command safely
+    /// @throws runtime exception if any of the strings is already mapped to a
+    /// command
+    void MapCommand(CommandInfo*, const vector<string>&);
+
    public:
     // Shell() = default;
 

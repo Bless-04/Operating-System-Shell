@@ -15,43 +15,44 @@ using std::cout;
 using std::endl;
 #pragma region Command Mappings
 
+/// @brief maps text to a command safely
+/// @throws if the command already exists
+void Shell::MapCommand(CommandInfo* ptr, const vector<string>& commands) {
+    for (const string& cmd : commands) {
+        if (this->_commands.find(cmd) != this->_commands.end() ||
+            Shell::COMMANDS.find(cmd) != Shell::COMMANDS.end())
+            throw std::runtime_error(cmd + " is already mapped to a command");
+        this->_commands[cmd] = ptr;
+    }
+}
+
 Shell::Shell() {
     Update_Directory();
 
-    // command pointer for extra mapping
-    CommandInfo* c = &(COMMANDS.at("help"));
-    _commands["?"] = c;
-    _commands["info"] = c;
-    _commands["cmds"] = c;
-    _commands["commands"] = c;
+    // extra mappings
+    // MapCommand(&COMMANDS.at("cd"), {"chdir"});
+    MapCommand(&COMMANDS.at("clr"), {"clear", "cls"});
+    // dir
+    MapCommand(&COMMANDS.at("environ"), {"env"});
+    MapCommand(&COMMANDS.at("echo"), {"print", "show", "display"});
+    MapCommand(&COMMANDS.at("help"), {"?", "info", "cmds", "commands"});
+    // pause
+    MapCommand(&COMMANDS.at("quit"),
+               {"exit", "q", "leave", "close", "end", "stop"});
+    // chmod
+    // chown
+    // ls
+    // pwd
+    // cat
+    // mkdir
+    // rmdir
+    MapCommand(&COMMANDS.at("rm"), {"remove", "delete", "del"});
+    // cp
 
-    c = &COMMANDS.at("clr");
-    _commands["clear"] = c;
-    _commands["cls"] = c;
-
-    _commands["env"] = &(COMMANDS.at("environ"));
-
-    c = &COMMANDS.at("mv");
-    _commands["move"] = c;
-    _commands["copy"] = c;
-
-    c = &COMMANDS.at("rm");
-    _commands["remove"] = c;
-    _commands["delete"] = c;
-    _commands["del"] = c;
-
-    c = &COMMANDS.at("echo");
-    _commands["print"] = c;
-    _commands["show"] = c;
-    _commands["display"] = c;
-
-    c = &COMMANDS.at("quit");
-    _commands["exit"] = c;
-    _commands["q"] = c;
-    _commands["leave"] = c;
-    _commands["close"] = c;
-    _commands["end"] = c;
-    _commands["stop"] = c;
+    MapCommand(&COMMANDS.at("mv"), {"move", "copy"});
+    // touch
+    // grep
+    // wc
 };
 
 Shell::~Shell() { _commands.clear(); }
