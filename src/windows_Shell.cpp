@@ -5,7 +5,9 @@
 #include <windows.system.h>
 #include <winternl.h>
 
+using std::istringstream;
 #include "Models/Shell.cpp"  //shell.cpp later
+#include "Windows/cd.cpp"
 
 bool Shell::Update_Directory() noexcept {
     const unsigned long length = GetCurrentDirectoryA(0, NULL);
@@ -21,20 +23,6 @@ bool Shell::Update_Directory() noexcept {
 
     return true;
 }
-
-#pragma region 1. cd
-void Shell::Change_Directory(const string& path) {
-    if (path.empty()) {
-        cout << this->_directory << endl;
-        return;
-    }
-
-    if (!SetCurrentDirectoryA(path.c_str()))
-        perror("Failed to change directory.");
-
-    this->Update_Directory();
-}
-#pragma endregion
 
 // 2. clear
 
@@ -158,12 +146,53 @@ void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
 
 #pragma region 21. word count (wc)
 void Shell::Word_Count(const string& file) {
-    size_t lines = 0, words = 0, chars = 0;
+    HANDLE hFile = CreateFileA(file.c_str(),           // File name
+                               GENERIC_READ,           // Read access
+                               FILE_SHARE_READ,        // Allow other reads
+                               NULL,                   // Default security
+                               OPEN_EXISTING,          // Open only if it exists
+                               FILE_ATTRIBUTE_NORMAL,  // Normal file
+                               NULL);                  // No template
 
-    cout << file << endl;
-    cout << "lines: " << lines << endl;
-    cout << "words: " << words << endl;
-    cout << "chararacters: " << chars << endl;
+    if (hFile == INVALID_HANDLE_VALUE) {
+        std::cerr << "Could not open file." << std::endl;
+        return;
+    }
+
+    const short SIZE = 4096;
+    char buffer[SIZE];
+    unsigned long bytesRead;
+    string text;
+
+    // Read the whole file into a string
+    while (ReadFile(hFile, buffer, SIZE, &bytesRead, NULL) && bytesRead > 0) {
+        text.append(buffer, bytesRead);
+    }
+
+    CloseHandle(hFile);
+
+    // Count characters
+    size_t characterCount = text.length();
+
+    // Count lines
+    size_t lineCount = 0;
+    for (char c : text) {
+        if (c == '\n') {
+            lineCount++;
+        }
+    }
+
+    // Count words using stringstream
+    size_t wordCount = 0;
+    istringstream ss(text);
+    string word;
+    while (ss >> word) {
+        wordCount++;
+    }
+
+    cout << "Characters: " << characterCount << endl;
+    cout << "Words: " << wordCount << endl;
+    cout << "Lines: " << lineCount << endl;
 }
 #pragma endregion
 

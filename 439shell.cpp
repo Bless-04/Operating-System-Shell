@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
     string input;
     Shell shell;
 
+    TryExecute("wc test.txt", shell);
     cout << "COSC 439 Shell (" << OS << ")" << endl;
 
     // if run from command line with args
