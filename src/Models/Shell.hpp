@@ -55,9 +55,9 @@ class Shell {
     void MapCommand(CommandInfo*, const vector<string>&);
 
    public:
-    //    Shell() = default;
-    Shell(unsigned int BUFFER) : BUFFER_SIZE(BUFFER) {}
+    Shell(unsigned int);
 
+    Shell() : Shell(1024) {}
     /// @brief Deletes anything dynamically alloced
     ~Shell();
 
@@ -91,10 +91,6 @@ class Shell {
                                  const unordered_set<char>& Remove);
 
 #pragma endregion
-
-    /// @brief Default Shell constructor
-    /// @note the extra commands are added in here
-    Shell();
 
 #pragma region Features To Implement For Project in Order
     /** (cd)

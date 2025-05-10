@@ -15,7 +15,7 @@ CommandInfo TryExecute(char**, const int, Shell&);
 int main(int argc, char** argv) {
     CommandInfo cmd;
     string input;
-    Shell shell;
+    Shell shell(1);
 
     // TryExecute("wc test.txt", shell);
     cout << "COSC 439 Shell (" << OS << ")" << endl;

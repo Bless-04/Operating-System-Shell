@@ -26,7 +26,7 @@ void Shell::MapCommand(CommandInfo* ptr, const vector<string>& commands) {
     }
 }
 
-Shell::Shell() : Shell(1024) {
+Shell::Shell(unsigned int buffer) : BUFFER_SIZE(buffer) {
     Update_Directory();
 
     // extra mappings
