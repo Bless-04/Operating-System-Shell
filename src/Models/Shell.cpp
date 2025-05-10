@@ -3,12 +3,11 @@
 /* For Defining Functions that are simple enough to not have to use OS specific
  * functions
  */
-#include "Shell.h"
+#include "Shell.hpp"
 
 #include <algorithm>
 #include <iostream>
 #include <regex>
-#include <string>
 
 using std::cin;
 using std::cout;

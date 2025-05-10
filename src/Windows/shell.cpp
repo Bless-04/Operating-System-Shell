@@ -4,11 +4,11 @@
 #include <winternl.h>
 
 using std::istringstream;
-#include "Models/Shell.cpp"
-#include "Windows/cd.hpp"       // 1.
-#include "Windows/dir.hpp"      // 3.
-#include "Windows/environ.hpp"  // 4.
-#include "Windows/wc.hpp"       // 21.
+#include "../Models/Shell.cpp"
+#include "cd.hpp"       // 1.
+#include "dir.hpp"      // 3.
+#include "environ.hpp"  // 4.
+#include "wc.hpp"       // 21.
 
 // 2. clear
 
