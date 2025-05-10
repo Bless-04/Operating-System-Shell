@@ -15,7 +15,7 @@ CommandInfo TryExecute(char**, const int, Shell&);
 int main(int argc, char** argv) {
     CommandInfo cmd;
     string input;
-    Shell shell(1);
+    Shell shell;  // default is 1024
 
     // TryExecute("wc test.txt", shell);
     cout << "COSC 439 Shell (" << OS << ")" << endl;
@@ -120,7 +120,7 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
             shell.Print_Working_Directory();
             break;
         case CAT:
-            //  shell.Concatenate(input.substr(4));
+            shell.Concatenate(vector<string>(args.begin() + 1, args.end()));
             break;
         case MKDIR:
             shell.Make_Directories(
@@ -143,7 +143,8 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
                        args.back());
             break;
         case TOUCH:
-            // shell.Create_Empty_File(args[1]);
+            shell.Create_Empty_Files(
+                vector<string>(args.begin() + 1, args.end()));
             break;
         case GREP:
             // shell.Search_File(args[1], args[2]);
