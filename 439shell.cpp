@@ -140,7 +140,8 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
             break;
         case MV:
 
-            shell.Move(vector<string>(args.begin() + 1, args.end()));
+            shell.Move(vector<string>(args.begin() + 1, args.end() - 1),
+                       args.back());
             break;
         case TOUCH:
             // shell.Create_Empty_File(args[1]);

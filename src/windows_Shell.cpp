@@ -3,13 +3,12 @@
 #include <windows.system.h>
 #include <winternl.h>
 
+using std::istringstream;
 #include "Models/Shell.cpp"
 #include "Windows/cd.hpp"       // 1.
 #include "Windows/dir.hpp"      // 3.
 #include "Windows/environ.hpp"  // 4.
 #include "Windows/wc.hpp"       // 21.
-
-using std::istringstream;
 
 // 2. clear
 

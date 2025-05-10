@@ -35,6 +35,7 @@ void Shell::Word_Count(const string& file) {
     string word;
     while (ss >> word) words++;
 
+    cout << file << endl;
     cout << "Characters: " << chars << endl;
     cout << "Words: " << words << endl;
     cout << "Lines: " << lines << endl;
