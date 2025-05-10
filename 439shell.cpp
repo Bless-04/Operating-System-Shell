@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     string input;
     Shell shell;
 
-    TryExecute("wc test.txt", shell);
+    // TryExecute("wc test.txt", shell);
     cout << "COSC 439 Shell (" << OS << ")" << endl;
 
     // if run from command line with args
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
         if (cmd.Type == INVALID) exit(1);
 
-        (exit(0));
+        exit(0);
     }
 
     while (cmd.Type != QUIT) {
@@ -129,16 +129,18 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
             break;
         case RMDIR:
 
-            // shell.Remove_Directories();
+            shell.Remove_Directories(
+                vector<string>(args.begin() + 1, args.end()));
             break;
         case RM:
-            // shell.Remove(args[1]);
+            shell.Remove(vector<string>(args.begin() + 1, args.end()));
             break;
         case CP:
-            // shell.Copy_File(args[1], args[2]);
+            // shell.Copy(args[1], args[2]);
             break;
         case MV:
-            // shell.Move_File(args[1], args[2]);
+
+            shell.Move(vector<string>(args.begin() + 1, args.end()));
             break;
         case TOUCH:
             // shell.Create_Empty_File(args[1]);

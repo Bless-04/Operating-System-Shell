@@ -90,7 +90,7 @@ void Shell::Copy(const vector<string>& files, const string& dest) {}
 #pragma endregion
 
 #pragma region 18. Move Files (mv)
-void Shell::Move(const vector<string>& files) {}
+void Shell::Move(const vector<string>& files, const string& dest) {}
 #pragma endregion
 
 #pragma region 19. Create (touch)

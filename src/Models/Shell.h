@@ -180,7 +180,7 @@ class Shell {
 
     /** (mv)
      * moves files or directories from one location to another */
-    void Move(const vector<string>&);
+    void Move(const vector<string>&, const string&);
 
     /** (touch)
      * creates empty files or updates access/modification times */

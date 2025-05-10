@@ -1,13 +1,22 @@
 /** For Defining Shell Functions that are windows specific */
 #include <direct.h>
-#include <ntdef.h>
-#include <ntstatus.h>
 #include <windows.system.h>
 #include <winternl.h>
 
+#include "Models/Shell.cpp"
+#include "Windows/cd.hpp"       // 1.
+#include "Windows/dir.hpp"      // 3.
+#include "Windows/environ.hpp"  // 4.
+#include "Windows/wc.hpp"       // 21.
+
 using std::istringstream;
-#include "Models/Shell.cpp"  //shell.cpp later
-#include "Windows/cd.cpp"
+
+// 2. clear
+
+// 5. echo
+// 6. help
+// 7. pause
+// 8. quit
 
 bool Shell::Update_Directory() noexcept {
     const unsigned long length = GetCurrentDirectoryA(0, NULL);
@@ -23,62 +32,6 @@ bool Shell::Update_Directory() noexcept {
 
     return true;
 }
-
-// 2. clear
-
-#pragma region 3. dir
-void Shell::List_Directory(const string& PATH) {
-    _WIN32_FIND_DATAA data;
-    HANDLE hFind;
-
-    string path = (PATH.empty() ? this->_directory : PATH);
-    path.append("\\*");
-
-    hFind = FindFirstFileA(path.c_str(), &data);
-
-    const char* TAB2 = "\t\t";
-    if (hFind == INVALID_HANDLE_VALUE) {
-        fprintf(stderr, ("Failed to read data in directory: %s\n"),
-                path.c_str());
-        return;
-    }
-
-    do {
-        const unsigned long& flags = data.dwFileAttributes;
-
-        cout << ((flags & FILE_ATTRIBUTE_DIRECTORY) ? "<DIR>\t" : "\t");
-
-        cout << data.nFileSizeLow << "\tbytes";
-        cout << TAB2 << data.cFileName << endl;
-    } while (FindNextFileA(hFind, &data) != 0);
-
-    if (GetLastError() != ERROR_NO_MORE_FILES)
-        perror("Failed to get the next file");
-
-    FindClose(hFind);
-}
-
-#pragma endregion
-
-#pragma region 4. env
-void Shell::Environment_Variables() {
-    wchar_t* envs = (wchar_t*)GetEnvironmentStringsW();
-    if (envs == NULL) {
-        perror("Failed to Get Environment Strings.");
-        return;
-    }
-
-    for (wchar_t* e = envs; *e; e += wcslen(e) + 1) std::wcout << e << endl;
-
-    FreeEnvironmentStringsW(envs);
-}
-#pragma endregion
-
-// 5. echo
-// 6. help
-// 7. pause
-// 8. quit
-
 #pragma region 9. chmod
 void Shell::Change_Mode(const string& perms) {
     cout << "Windows Displayed file permissions" << perms << endl;
@@ -127,7 +80,7 @@ void Shell::Copy(const vector<string>& files, const string& dest) {
 #pragma endregion
 
 #pragma region 18. Move Files (mv)
-void Shell::Move(const vector<string>& files) {
+void Shell::Move(const vector<string>& files, const string& dest) {
     cout << "Windows Moved file" << endl;
 }
 #pragma endregion
@@ -141,58 +94,6 @@ void Shell::Create_Empty_Files(const vector<string>& files) {
 #pragma region 20. search text patterns (grep)
 void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
     cout << "Windows Opened file" << endl;
-}
-#pragma endregion
-
-#pragma region 21. word count (wc)
-void Shell::Word_Count(const string& file) {
-    HANDLE hFile = CreateFileA(file.c_str(),           // File name
-                               GENERIC_READ,           // Read access
-                               FILE_SHARE_READ,        // Allow other reads
-                               NULL,                   // Default security
-                               OPEN_EXISTING,          // Open only if it exists
-                               FILE_ATTRIBUTE_NORMAL,  // Normal file
-                               NULL);                  // No template
-
-    if (hFile == INVALID_HANDLE_VALUE) {
-        std::cerr << "Could not open file." << std::endl;
-        return;
-    }
-
-    const short SIZE = 4096;
-    char buffer[SIZE];
-    unsigned long bytesRead;
-    string text;
-
-    // Read the whole file into a string
-    while (ReadFile(hFile, buffer, SIZE, &bytesRead, NULL) && bytesRead > 0) {
-        text.append(buffer, bytesRead);
-    }
-
-    CloseHandle(hFile);
-
-    // Count characters
-    size_t characterCount = text.length();
-
-    // Count lines
-    size_t lineCount = 0;
-    for (char c : text) {
-        if (c == '\n') {
-            lineCount++;
-        }
-    }
-
-    // Count words using stringstream
-    size_t wordCount = 0;
-    istringstream ss(text);
-    string word;
-    while (ss >> word) {
-        wordCount++;
-    }
-
-    cout << "Characters: " << characterCount << endl;
-    cout << "Words: " << wordCount << endl;
-    cout << "Lines: " << lineCount << endl;
 }
 #pragma endregion
 
