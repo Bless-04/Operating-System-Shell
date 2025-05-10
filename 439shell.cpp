@@ -12,7 +12,6 @@ CommandInfo TryExecute(vector<string>&, Shell&);
 CommandInfo TryExecute(char**, const int, Shell&);
 
 /// @brief takes command line args
-/// @return
 int main(int argc, char** argv) {
     CommandInfo cmd;
     string input;

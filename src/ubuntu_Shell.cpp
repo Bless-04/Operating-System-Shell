@@ -16,6 +16,22 @@ bool Shell::Update_Directory() noexcept {
     return true;
 }
 
+string Shell::Read_File(const string& file) {
+    int fd = open(file.c_str(), O_RDONLY);
+    if (fd < 0) {
+        fprintf(stderr, "Failed to open '%s'\n", file.c_str());
+        return string();
+    }
+
+    char buffer[this->BUFFER_SIZE];
+    size_t bytes;
+    string text;
+    while ((bytes = read(fd, buffer, sizeof(buffer))) > 0)
+        text.append(buffer, bytes);
+
+    close(fd);
+    return text;
+}
 #pragma region 1. cd
 void Shell::Change_Directory(const string& path) {
     if (chdir(path.c_str()) != 0) perror("Failed to change directory");

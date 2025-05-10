@@ -24,6 +24,8 @@ using std::vector;
  */
 class Shell {
    private:
+    /// @brief default buffer size for things that need it
+    const unsigned int BUFFER_SIZE;
 #pragma region Command Functionality
 
     /// @brief The current working directory
@@ -33,6 +35,10 @@ class Shell {
     /// @return True if the directory was updated
     /// @note use for stuff that change directory
     bool Update_Directory() noexcept;
+
+    /// @brief platform specific read file
+    /// @returns file text as a string
+    string Read_File(const string&);
 
     /// @brief Default Commands; command names to the commandinfo
     /// @note all commands should be lowercase
@@ -49,7 +55,8 @@ class Shell {
     void MapCommand(CommandInfo*, const vector<string>&);
 
    public:
-    // Shell() = default;
+    //    Shell() = default;
+    Shell(unsigned int BUFFER) : BUFFER_SIZE(BUFFER) {}
 
     /// @brief Deletes anything dynamically alloced
     ~Shell();

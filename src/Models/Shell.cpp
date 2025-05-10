@@ -15,7 +15,8 @@ using std::endl;
 #pragma region Command Mappings
 
 /// @brief maps text to a command safely
-/// @throws if the command already exists
+/// @note exists for no accidental overwrites
+/// @throws if the command already mapped
 void Shell::MapCommand(CommandInfo* ptr, const vector<string>& commands) {
     for (const string& cmd : commands) {
         if (this->_commands.find(cmd) != this->_commands.end() ||
@@ -25,7 +26,7 @@ void Shell::MapCommand(CommandInfo* ptr, const vector<string>& commands) {
     }
 }
 
-Shell::Shell() {
+Shell::Shell() : Shell(1024) {
     Update_Directory();
 
     // extra mappings

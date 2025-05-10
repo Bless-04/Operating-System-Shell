@@ -17,6 +17,35 @@ using std::istringstream;
 // 7. pause
 // 8. quit
 
+string Shell::Read_File(const string& file) {
+    if (file.empty()) {
+        std::cerr << "No file was given" << endl;
+        return string();
+    }
+    HANDLE hFile = CreateFileA(file.c_str(),           // File name
+                               GENERIC_READ,           // Read access
+                               FILE_SHARE_READ,        // Allow other reads
+                               NULL,                   // Default security
+                               OPEN_EXISTING,          // if exists
+                               FILE_ATTRIBUTE_NORMAL,  // Normal file
+                               NULL);                  // No template
+
+    if (hFile == INVALID_HANDLE_VALUE) {
+        fprintf(stderr, "Failed to open '%s'\n", file.c_str());
+        return string();
+    }
+
+    char buffer[BUFFER_SIZE];
+    unsigned long bytes = 0;  // readfile doesnt allow size_t
+    string text;
+
+    while (ReadFile(hFile, buffer, sizeof(buffer), &bytes, NULL) && bytes > 0)
+        text.append(buffer, bytes);
+
+    CloseHandle(hFile);
+
+    return text;
+}
 bool Shell::Update_Directory() noexcept {
     const unsigned long length = GetCurrentDirectoryA(0, NULL);
     if (length == 0) {
@@ -47,9 +76,7 @@ void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
 // 12. pwd
 
 #pragma region 13. cat
-void Shell::Concatenate(const vector<string>& files) {
-    cout << "Windows Displayed file" << files[0] << endl;
-}
+void Shell::Concatenate(const vector<string>& files) {}
 #pragma endregion
 
 #pragma region 14. mkdir
