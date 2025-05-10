@@ -8,7 +8,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "CommandInfo.h"
+#include "CommandInfo.hpp"
 
 using std::unordered_map;
 using std::unordered_set;
