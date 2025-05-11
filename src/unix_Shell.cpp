@@ -1,4 +1,5 @@
 /** For Defining Shell Functions that are unix/ubu5ntu specific */
+#include <dirent.h>
 #include <fcntl.h>
 #include <pwd.h>
 #include <sys/stat.h>
@@ -44,7 +45,25 @@ void Shell::Change_Directory(const string& path) {
 // 2. clear
 
 #pragma region 3. dir
-void Shell::List_Directory(const string&) {}
+void Shell::List_Directory(const string& path) {
+    DIR* path = path.empty() ? opendir(".") : opendir(path.c_str());
+    if (!path) {
+        perror("Failed to open directory");
+        return;
+    }
+
+    struct dirent* entry;
+    while ((entry = readdir(path)) != nullptr) {
+        // Skip . and .. entries
+        if (strcmp(entry->d_name, ".") == 0 ||
+            strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+        cout << entry->d_name << "\t";
+    }
+    cout << std::endl;
+    closedir(path);
+}
 
 #pragma endregion
 
