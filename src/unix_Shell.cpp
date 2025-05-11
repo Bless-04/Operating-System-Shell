@@ -99,23 +99,66 @@ void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
 // 12. pwd
 
 #pragma region 13. cat
-void Shell::Concatenate(const vector<string>& files) {}
+void Shell::Concatenate(const vector<string>& files) {
+    if (files.empty()) {
+        fprintf(stderr, "No files were given\n");
+        return;
+    }
+
+    for (const string& file : files) {
+        int fd = open(file.c_str(), O_RDONLY);
+        if (fd == -1) {
+            perror(("cat: " + file).c_str());
+            continue;
+        }
+
+        char buffer[this->BUFFER_SIZE];
+        size_t bytesRead;
+        while ((bytesRead = read(fd, buffer, sizeof(buffer))) > 0)
+            write(STDOUT_FILENO, buffer, bytesRead);
+
+        close(fd);
+    }
+}
 #pragma endregion
 
 #pragma region 14. mkdir
 
 void Shell::Make_Directories(const vector<string>& directories) {
-    cout << "Unix Created directory" << directories[0] << endl;
+    if (directories.empty()) {
+        fprintf(stderr, "No directories were given\n");
+        return;
+    }
+
+    for (const string& dir : directories) {
+        if (mkdir(dir.c_str(), 0755) == -1) perror(("mkdir: " + dir).c_str());
+    }
 }
 #pragma endregion
 
 #pragma region 15. rmdir
-void Shell::Remove_Directories(const vector<string>& directories) {}
+void Shell::Remove_Directories(const vector<string>& directories) {
+    if (directories.empty()) {
+        fprintf(stderr, "No directories were given\n");
+        return;
+    }
+
+    for (const string& dir : directories)
+        if (rmdir(dir.c_str()) == -1) perror(("rmdir: " + dir).c_str());
+}
 
 #pragma endregion
 
 #pragma region 16. Remove Files (rm)
-void Shell::Remove(const vector<string>& files) {}
+void Shell::Remove(const vector<string>& files) {
+    if (files.empty()) {
+        fprintf(stderr, "No files were given\n");
+        return;
+    }
+
+    for (const string& file : files)
+        if (unlink(file.c_str()) == -1) perror(("rm: " + file).c_str());
+}
 #pragma endregion
 
 #pragma region 17. Copy Files (cp)
