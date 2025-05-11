@@ -1,4 +1,4 @@
-/** For Defining Shell Functions that are unix/ubuntu specific */
+/** For Defining Shell Functions that are unix/ubu5ntu specific */
 #include <fcntl.h>
 #include <pwd.h>
 #include <sys/stat.h>
@@ -30,11 +30,14 @@ string Shell::Read_File(const string& file) {
         text.append(buffer, bytes);
 
     close(fd);
+
     return text;
 }
 #pragma region 1. cd
 void Shell::Change_Directory(const string& path) {
     if (chdir(path.c_str()) != 0) perror("Failed to change directory");
+
+    this->Update_Directory();
 }
 #pragma endregion
 
@@ -88,7 +91,7 @@ void Shell::Concatenate(const vector<string>& files) {}
 #pragma region 14. mkdir
 
 void Shell::Make_Directories(const vector<string>& directories) {
-    cout << "Windows Created directory" << directories[0] << endl;
+    cout << "Unix Created directory" << directories[0] << endl;
 }
 #pragma endregion
 
@@ -129,6 +132,8 @@ void Shell::Search_Text_Patterns(const string& pattern, const string& file) {}
 void Shell::Word_Count(const string& file) {
     size_t lines = 0, words = 0, chars = 0;
 
+    string text = Read_File(file);
+    if (text.empty()) return;
     int fd = open(file.c_str(), O_RDONLY);
     if (fd < 0) {
         perror("Failed to open file");
