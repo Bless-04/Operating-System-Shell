@@ -146,7 +146,7 @@ CommandInfo Shell::GetCommandInfo(const string& cmd) {
 unordered_map<string, CommandInfo> Shell::COMMANDS = {
     {"cd", CommandInfo(CD, "Changes current directory")},
     {"clr", CommandInfo(CLR, "Clears the display screen.")},
-    {"dir", CommandInfo(DIR, "Lists the directory contents.")},
+    {"dir", CommandInfo(LIST_DIR, "Lists the directory contents.")},
     {"environ", CommandInfo(ENVIRON, "Lists the environment variables.")},
     {"echo", CommandInfo(ECHO, "Displays text.")},
     {"help", CommandInfo(HELP, "Displays help.")},

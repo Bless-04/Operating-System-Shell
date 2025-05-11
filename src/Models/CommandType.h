@@ -16,7 +16,7 @@ enum CommandType {
     CLR = 2,
 
     /// @brief List Directory Contents
-    DIR = 3,
+    LIST_DIR = 3,
 
     /// @brief  Environment Variables
     ENVIRON = 4,

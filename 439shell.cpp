@@ -87,7 +87,7 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
         case CLR:
             shell.Clear_Screen();
             break;
-        case DIR:
+        case LIST_DIR:
             shell.List_Directory(args[1]);
             break;
         case ENVIRON:

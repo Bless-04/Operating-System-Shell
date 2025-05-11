@@ -46,7 +46,7 @@ void Shell::Change_Directory(const string& path) {
 
 #pragma region 3. dir
 void Shell::List_Directory(const string& path) {
-    struct DIR* dir = path.empty() ? opendir(".") : opendir(path.c_str());
+    DIR* dir = path.empty() ? opendir(".") : opendir(path.c_str());
     if (!dir) {
         perror("Failed to open directory");
         return;
@@ -54,11 +54,6 @@ void Shell::List_Directory(const string& path) {
 
     struct dirent* entry;
     while ((entry = readdir(dir)) != nullptr) {
-        // Skip . and .. entries
-        if (strcmp(entry->d_name, ".") == 0 ||
-            strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
         cout << entry->d_name << "\t";
     }
     cout << endl;
