@@ -102,13 +102,10 @@ void Shell::Copy(const vector<string>& files, const string& dest) {
         return;
     }
 
-    for (const string& file : files) {
-        if (!CopyFileA(file.c_str(), dest.c_str(), false)) {
-            DWORD error = GetLastError();
-            fprintf(stderr, "cp: %s to %s failed with error %lu\n",
-                    file.c_str(), dest.c_str(), error);
-        }
-    }
+    for (const string& file : files)
+        if (!CopyFileA(file.c_str(), "//d", FALSE))
+            fprintf(stderr, "Failed to copy '%s' into '%s'\n", file.c_str(),
+                    dest.c_str());
 }
 #pragma endregion
 
