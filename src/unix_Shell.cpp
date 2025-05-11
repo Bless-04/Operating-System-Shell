@@ -16,24 +16,6 @@ bool Shell::Update_Directory() noexcept {
 
     return true;
 }
-
-string Shell::Read_File(const string& file) {
-    int fd = open(file.c_str(), O_RDONLY);
-    if (fd < 0) {
-        fprintf(stderr, "Failed to open '%s'\n", file.c_str());
-        return string();
-    }
-
-    char buffer[this->BUFFER_SIZE];
-    size_t bytes;
-    string text;
-    while ((bytes = read(fd, buffer, sizeof(buffer))) > 0)
-        text.append(buffer, bytes);
-
-    close(fd);
-
-    return text;
-}
 #pragma region 1. cd
 void Shell::Change_Directory(const string& path) {
     if (chdir(path.c_str()) != 0) perror("Failed to change directory");
@@ -255,13 +237,17 @@ void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
         return;
     }
 
-    // Simple implementation that reads the file line by line
-    // and checks if the pattern exists in each line
-    std::ifstream input_file(file);
-    if (!input_file.is_open()) {
+    int fd = open(file.c_str(), O_RDONLY);
+    if (fd == -1) {
         perror(("grep: " + file).c_str());
         return;
     }
+
+    char buffer[this->BUFFER_SIZE];
+    size_t bytes = 0;
+    string line;
+    while (read(fd, buffer, sizeof(buffer)) > 0) {
+        if (std::regex(buffer, pattern)) }
 
     string line;
     int line_number = 1;
@@ -286,33 +272,33 @@ void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
 
 #pragma region 21. word count (wc)
 void Shell::Word_Count(const string& file) {
-    size_t lines = 0, words = 0, chars = 0;
-
-    string text = Read_File(file);
-    if (text.empty()) return;
-    int fd = open(file.c_str(), O_RDONLY);
+    const int fd = open(file.c_str(), O_RDONLY);
     if (fd < 0) {
-        perror("Failed to open file");
+        fprintf(stderr, "Failed to open '%s'\n", file.c_str());
+        cout << "wc <files>" << endl;
         return;
     }
 
-    char buffer[1024];
-    ssize_t bytesRead;
-
-    while ((bytesRead = read(fd, buffer, sizeof(buffer))) > 0) {
-        write(STDOUT_FILENO, buffer, bytesRead);
-        for (const char& c : buffer) {
-            if (c == '\n') ++lines;
-            if (c == ' ') ++words;
-            ++chars;
-        }
-    }
+    size_t lines = 0, words = 0;
+    char buffer[this->BUFFER_SIZE];
+    size_t bytes;
+    string text;
+    while ((bytes = read(fd, buffer, sizeof(buffer))) > 0)
+        text.append(buffer, bytes);
     close(fd);
 
+    // counting lines
+    for (const char& c : text)
+        if (c == '\n') lines++;
+
+    istringstream ss(text);
+
+    string word;
+    while (ss >> word) words++;
     cout << file << endl;
     cout << "lines: " << lines << endl;
     cout << "words: " << words << endl;
-    cout << "chararacters: " << chars << endl;
+    cout << "chararacters: " << text.length() << endl;
 }
 #pragma endregion
 
