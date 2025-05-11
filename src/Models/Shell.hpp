@@ -31,14 +31,10 @@ class Shell {
     /// @brief The current working directory
     string _directory;
 
-    /// @brief Updates the shell directory variable
+    /// @brief os specific updating the shell directory variable
     /// @return True if the directory was updated
     /// @note use for stuff that change directory
     bool Update_Directory() noexcept;
-
-    /// @brief platform specific read file
-    /// @returns file text as a string
-    string Read_File(const string&);
 
     /// @brief Default Commands; command names to the commandinfo
     /// @note all commands should be lowercase
@@ -123,10 +119,6 @@ class Shell {
      * @note Reduces multiple spaces/tabs to a single space.
      */
     void Echo(const string&);
-
-    /** (help)
-     *  Displays the user manual using the more filter. */
-    void Help(const CommandType&, const string&);
 
     /// @brief Displays default commands
     void Help();

@@ -17,35 +17,6 @@ using std::istringstream;
 // 7. pause
 // 8. quit
 
-string Shell::Read_File(const string& file) {
-    if (file.empty()) {
-        std::cerr << "No file was given" << endl;
-        return string();
-    }
-    HANDLE hFile = CreateFileA(file.c_str(),           // File name
-                               GENERIC_READ,           // Read access
-                               FILE_SHARE_READ,        // Allow other reads
-                               NULL,                   // Default security
-                               OPEN_EXISTING,          // if exists
-                               FILE_ATTRIBUTE_NORMAL,  // Normal file
-                               NULL);                  // No template
-
-    if (hFile == INVALID_HANDLE_VALUE) {
-        fprintf(stderr, "Failed to open '%s'\n", file.c_str());
-        return string();
-    }
-
-    char buffer[BUFFER_SIZE];
-    unsigned long bytes = 0;  // readfile doesnt allow size_t
-    string text;
-
-    while (ReadFile(hFile, buffer, sizeof(buffer), &bytes, NULL) && bytes > 0)
-        text.append(buffer, bytes);
-
-    CloseHandle(hFile);
-
-    return text;
-}
 bool Shell::Update_Directory() noexcept {
     const unsigned long length = GetCurrentDirectoryA(0, NULL);
     if (length == 0) {
@@ -82,20 +53,44 @@ void Shell::Concatenate(const vector<string>& files) {}
 #pragma region 14. mkdir
 
 void Shell::Make_Directories(const vector<string>& directories) {
-    cout << "Windows Created directory" << directories[0] << endl;
+    if (directories.empty()) {
+        fprintf(stderr, "No directories were given\n");
+        cout << "mkdir <directories>" << endl;
+        return;
+    }
+
+    for (const string& dir : directories)
+        if (!CreateDirectoryA(dir.c_str(), NULL))
+            fprintf(stderr, "Failed to create directory '%s'\n", dir.c_str());
 }
 #pragma endregion
 
 #pragma region 15. rmdir
 void Shell::Remove_Directories(const vector<string>& directories) {
-    cout << "Windows Removed directory" << directories[0] << endl;
+    if (directories[0].empty()) {
+        fprintf(stderr, "No directories were given\n");
+        cout << "rmdir <directories>" << endl;
+        return;
+    }
+
+    for (const string& dir : directories)
+        if (!RemoveDirectoryA(dir.c_str()))
+            fprintf(stderr, "Failed to Remove Directory '%s", dir.c_str());
 }
 
 #pragma endregion
 
 #pragma region 16. Remove Files (rm)
 void Shell::Remove(const vector<string>& files) {
-    cout << "Windows Removed file" << files[0] << endl;
+    if (files[0].empty()) {
+        fprintf(stderr, "No files were given\n");
+        cout << "rm <files>" << endl;
+        return;
+    }
+
+    for (const string& file : files)
+        if (!DeleteFileA(file.c_str()))
+            fprintf(stderr, "Failed to remove '%s'\n", file.c_str());
 }
 #pragma endregion
 

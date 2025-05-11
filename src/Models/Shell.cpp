@@ -12,6 +12,7 @@
 using std::cin;
 using std::cout;
 using std::endl;
+using std::regex;  // for grep
 #pragma region Command Mappings
 
 /// @brief maps text to a command safely
@@ -58,7 +59,7 @@ Shell::Shell(unsigned int buffer) : BUFFER_SIZE(buffer) {
 Shell::~Shell() { _commands.clear(); }
 // 1. cd probably depends on platform
 //
-void Shell::Clear_Screen() { cout << "\033[2J"; }
+void Shell::Clear_Screen() { cout << "\033[2J\033[1;1H"; }
 // 3. dir definitely depends on platform
 // 4. environ probably depends on platform
 #pragma endregion

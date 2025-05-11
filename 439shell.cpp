@@ -127,7 +127,6 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
                 vector<string>(args.begin() + 1, args.end()));
             break;
         case RMDIR:
-
             shell.Remove_Directories(
                 vector<string>(args.begin() + 1, args.end()));
             break;
