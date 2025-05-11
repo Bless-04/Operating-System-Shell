@@ -75,11 +75,13 @@ void DeleteStartingSpaces(vector<string>& args) {
 /// @param shell
 /// @return command info
 CommandInfo TryExecute(vector<string>& args, Shell& shell) {
-    string text;
     CommandInfo cmd_info = shell.GetCommandType(Shell::SanitizeString(args[0]));
-    /// @note to guarantee no segfault for things that need arg[1]
-    if (args.size() == 1) args.push_back(string());
+    /// @note to guarantee no segfault for things that need arg[1] and arg[2]
+    if (args.size() < 3)
+        while (args.size() < 3) args.push_back(string());
 
+    string text;  // for anything that need specific formatted text ; string
+                  // dummy var
     switch (cmd_info.Type) {
         case CD:
             shell.Change_Directory(args[1]);
@@ -108,10 +110,11 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
             shell.Quit();
             break;
         case CHMOD:
-            // shell.Change_Mode(input.substr(7));
+            shell.Change_Mode(args[1]);
             break;
         case CHOWN:
-            // shell.Change_Ownership();
+            shell.Change_Ownership(
+                args[1], vector<string>(args.begin() + 2, args.end()));
             break;
         case LS:
             shell.List();
@@ -134,10 +137,10 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
             shell.Remove(vector<string>(args.begin() + 1, args.end()));
             break;
         case CP:
-            // shell.Copy(args[1], args[2]);
+            shell.Copy(vector<string>(args.begin() + 1, args.end() - 1),
+                       args.back());
             break;
         case MV:
-
             shell.Move(vector<string>(args.begin() + 1, args.end() - 1),
                        args.back());
             break;
@@ -146,7 +149,7 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
                 vector<string>(args.begin() + 1, args.end()));
             break;
         case GREP:
-            // shell.Search_File(args[1], args[2]);
+            shell.Search_Text_Patterns(args[1], args[2]);
             break;
         case WC:
             shell.Word_Count(args[1]);

@@ -43,7 +43,7 @@ void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
 }
 #pragma endregion
 
-// 11. ls
+// 11. ls depends on dir
 // 12. pwd
 
 #pragma region 13. cat
@@ -53,7 +53,7 @@ void Shell::Concatenate(const vector<string>& files) {}
 #pragma region 14. mkdir
 
 void Shell::Make_Directories(const vector<string>& directories) {
-    if (directories.empty()) {
+    if (directories[0].empty()) {
         fprintf(stderr, "No directories were given\n");
         cout << "mkdir <directories>" << endl;
         return;
@@ -75,7 +75,7 @@ void Shell::Remove_Directories(const vector<string>& directories) {
 
     for (const string& dir : directories)
         if (!RemoveDirectoryA(dir.c_str()))
-            fprintf(stderr, "Failed to Remove Directory '%s", dir.c_str());
+            fprintf(stderr, "Failed to Remove Directory'%s", dir.c_str());
 }
 
 #pragma endregion
@@ -89,14 +89,26 @@ void Shell::Remove(const vector<string>& files) {
     }
 
     for (const string& file : files)
-        if (!DeleteFileA(file.c_str()))
-            fprintf(stderr, "Failed to remove '%s'\n", file.c_str());
+        if (!DeleteFileA(file.c_str()) && !RemoveDirectoryA(file.c_str()))
+            fprintf(stderr, "Failed to Remove '%s'\n", file.c_str());
 }
 #pragma endregion
 
 #pragma region 17. Copy Files (cp)
 void Shell::Copy(const vector<string>& files, const string& dest) {
-    cout << "Windows Copied file" << files[0] << " to " << dest << endl;
+    if (files[0].empty() || dest.empty()) {
+        fprintf(stderr, "Not enough argument given\n");
+        cout << "cp <files> <destination>" << endl;
+        return;
+    }
+
+    for (const string& file : files) {
+        if (!CopyFileA(file.c_str(), dest.c_str(), false)) {
+            DWORD error = GetLastError();
+            fprintf(stderr, "cp: %s to %s failed with error %lu\n",
+                    file.c_str(), dest.c_str(), error);
+        }
+    }
 }
 #pragma endregion
 
