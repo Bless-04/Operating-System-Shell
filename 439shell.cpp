@@ -2,7 +2,6 @@
 
 #include "src/shell_type.h"
 
-using std::cerr;
 using std::getline;
 using std::stringstream;
 

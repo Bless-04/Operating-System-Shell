@@ -6,9 +6,13 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include "Models/Shell.cpp"
+#include "../Models/Shell.cpp"
 
+#include "cd.hpp"       // 1.
+//#include "dir.hpp"      // 3.
 #include "environ.hpp" // 4.
+#include "wc.hpp"       // 21.
+
 
 bool Shell::Update_Directory() noexcept
 {
@@ -20,15 +24,7 @@ bool Shell::Update_Directory() noexcept
 
     return true;
 }
-#pragma region 1. cd
-void Shell::Change_Directory(const string &path)
-{
-    if (chdir(path.c_str()) != 0)
-        perror("Failed to change directory");
 
-    this->Update_Directory();
-}
-#pragma endregion
 
 // 2. clear
 
@@ -315,41 +311,7 @@ void Shell::Search_Text_Patterns(const string &pattern, const string &file)
 }
 #pragma endregion
 
-#pragma region 21. word count (wc)
-void Shell::Word_Count(const string &file)
-{
-    const int fd = open(file.c_str(), O_RDONLY);
-    if (fd < 0)
-    {
-        fprintf(stderr, "Failed to open '%s'\n", file.c_str());
-        cout << "wc <files>" << endl;
-        return;
-    }
 
-    size_t lines = 0, words = 0;
-    char buffer[this->BUFFER_SIZE];
-    size_t bytes;
-    string text;
-    while ((bytes = read(fd, buffer, sizeof(buffer))) > 0)
-        text.append(buffer, bytes);
-    close(fd);
-
-    // counting lines
-    for (const char &c : text)
-        if (c == '\n')
-            lines++;
-
-    istringstream ss(text);
-
-    string word;
-    while (ss >> word)
-        words++;
-    cout << file << endl;
-    cout << "lines: " << lines << endl;
-    cout << "words: " << words << endl;
-    cout << "chararacters: " << text.length() << endl;
-}
-#pragma endregion
 
 #pragma region Execution / Starting Process
 pid_t Shell::Execute(const string &name)
@@ -373,6 +335,9 @@ pid_t Shell::Execute(const string &name)
     }
     else
     { /* parent process*/
+
+        printf("Started Process '%s' with PID: %lld\n", name.c_str(), pid);
+
         int status;
         waitpid(pid, &status, 0);
         return pid;
