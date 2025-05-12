@@ -188,6 +188,8 @@ class Shell {
      * Search for specified patterns in files or input and display matching
      * lines.
      * @note its just regex
+     * @note  END: couldnt get regex to work since i could not figure out how to
+     * split it by lines
      * */
     void Search_Text_Patterns(const string&, const string&);
 
