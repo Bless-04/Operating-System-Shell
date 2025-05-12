@@ -4,6 +4,8 @@
 #include <windows.system.h>
 #include <winternl.h>
 
+// formatter keeps reordering this
+
 #include "cd.hpp"  // 1.
 // 2. clear
 #include "dir.hpp"      // 3.
@@ -17,8 +19,10 @@
 #include "cat.hpp"    // 13.
 #include "cp.hpp"     // 17
 #include "mkdir.hpp"  // 14.
+#include "mv.hpp"     // 18.
 #include "rm.hpp"     // 16.
 #include "rmdir.hpp"  // 15.
+#include "touch.hpp"  // 19.
 #include "wc.hpp"     // 21.
 
 bool Shell::Update_Directory() noexcept {
@@ -58,25 +62,6 @@ void Shell::Change_Mode(vector<string> files) {
 void Shell::Change_Ownership(vector<string> paths) {}
 #pragma endregion
 
-#pragma region 18. Move Files (mv)
-void Shell::Move(vector<string> files) { cout << "Windows Moved file" << endl; }
-#pragma endregion
-
-#pragma region 19. Create (touch)
-void Shell::Create_Empty_Files(const vector<string>& files) {
-    if (files.size() == 0 || files[0].empty()) {
-        fprintf(stderr, "No files were given\n");
-        cout << "touch <files>" << endl;
-        return;
-    }
-
-    for (const string& file : files)
-        if (!CreateFileA(file.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
-                         OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL))
-            perror(("Failed to create " + file).c_str());
-}
-#pragma endregion
-
 #pragma region 20. search text patterns (grep)
 void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
     if (file.empty()) {
@@ -85,31 +70,30 @@ void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
         return;
     }
 
-    std::ifstream ifs(file);
-    if (!ifs.is_open()) {
-        std::cerr << "Error opening file: " << file << std::endl;
+    HANDLE hFile = CreateFileA(file.c_str(),           // File name
+                               GENERIC_READ,           // Read access
+                               FILE_SHARE_READ,        // Allow other reads
+                               NULL,                   // Default security
+                               OPEN_EXISTING,          // if exists
+                               FILE_ATTRIBUTE_NORMAL,  // Normal file
+                               NULL);                  // No template
+
+    if (hFile == INVALID_HANDLE_VALUE) {
+        fprintf(stderr, "Failed to open '%s'\n", file.c_str());
         return;
     }
 
-    std::string buffer;
-    buffer.resize(this->BUFFER_SIZE);  // buffer size
-    std::regex re(pattern);
-    int line = 0;
+    char buffer[BUFFER_SIZE];
+    unsigned long bytes = 0;  // readfile doesnt allow size_t??
+    string text;
 
-    while (ifs.read(&buffer[0], buffer.size())) {
-        std::string text(buffer, 0, ifs.gcount());
-        auto words_begin = std::sregex_iterator(text.begin(), text.end(), re);
-        auto words_end = std::sregex_iterator();
-
-        for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
-            std::smatch match = *i;
-            std::cout << file << ":" << line << ": " << match.str(0)
-                      << std::endl;
-        }
-        line++;
+    while (ReadFile(hFile, buffer, sizeof(buffer), &bytes, NULL) && bytes > 0) {
+        string text(buffer, bytes);
+        if (text.find(pattern) != string::npos)
+            cout << file << ":" << endl << text << endl;
     }
 
-    ifs.close();
+    CloseHandle(hFile);
 }
 #pragma endregion
 
