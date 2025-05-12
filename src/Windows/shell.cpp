@@ -4,7 +4,7 @@
 #include <windows.system.h>
 #include <winternl.h>
 
-#include "cd.hpp"       // 1.
+#include "cd.hpp"  // 1.
 // 2. clear
 #include "dir.hpp"      // 3.
 #include "environ.hpp"  // 4.
@@ -14,9 +14,12 @@
 // 8. quit
 // 11. ls depends on dir
 // 12. pwd
-#include "wc.hpp"       // 21.
-
-
+#include "cat.hpp"    // 13.
+#include "cp.hpp"     // 17
+#include "mkdir.hpp"  // 14.
+#include "rm.hpp"     // 16.
+#include "rmdir.hpp"  // 15.
+#include "wc.hpp"     // 21.
 
 bool Shell::Update_Directory() noexcept {
     const unsigned long length = GetCurrentDirectoryA(0, NULL);
@@ -32,94 +35,45 @@ bool Shell::Update_Directory() noexcept {
 
     return true;
 }
+
 #pragma region 9. chmod
 
 void Shell::Change_Mode(vector<string> files) {
-    cout << "Windows Displayed file permissions" << perms << endl;
+    if (files.size() < 2 || files[0].empty()) {
+        fprintf(stderr, "Not enough parameters\n");
+        cout << "chmod <permissions> <files>" << endl;
+        return;
+    }
+
+    const char* perms = files[0].c_str();
+    files.erase(files.begin());
+
+    for (const string& file : files)
+        if (!SetFileAttributesA(file.c_str(), atoi(perms)))
+            perror(("Failed to change permissions of file " + file).c_str());
 }
 #pragma endregion
 
 #pragma region 10. chown
-void Shell::Change_Ownership(vector<string>& paths) {
-    cout << "Windows Displayed file owner" << owner << endl;
-}
-#pragma endregion
-
-
-
-#pragma region 13. cat
-void Shell::Concatenate(const vector<string>& files) {}
-#pragma endregion
-
-#pragma region 14. mkdir
-
-void Shell::Make_Directories(const vector<string>& directories) {
-    if (directories.size() == 0 ||  directories[0].empty()) {
-        fprintf(stderr, "No directories were given\n");
-        cout << "mkdir <directories>" << endl;
-        return;
-    }
-
-    for (const string& dir : directories)
-        if (!CreateDirectoryA(dir.c_str(), NULL))
-            fprintf(stderr, "Failed to create directory '%s'\n", dir.c_str());
-}
-#pragma endregion
-
-#pragma region 15. rmdir
-void Shell::Remove_Directories(const vector<string>& directories) {
-    if (directorys.size() == 0 || directories[0].empty()) {
-        fprintf(stderr, "No directories were given\n");
-        cout << "rmdir <directories>" << endl;
-        return;
-    }
-
-    for (const string& dir : directories)
-        if (!RemoveDirectoryA(dir.c_str()))
-            fprintf(stderr, "Failed to Remove Directory'%s", dir.c_str());
-}
-
-#pragma endregion
-
-#pragma region 16. Remove Files (rm)
-void Shell::Remove(const vector<string>& files) {
-    if (files.size() == 0 || files[0].empty()) {
-        fprintf(stderr, "No files were given\n");
-        cout << "rm <files>" << endl;
-        return;
-    }
-
-    for (const string& file : files)
-        if (!DeleteFileA(file.c_str()) && !RemoveDirectoryA(file.c_str()))
-            fprintf(stderr, "Failed to Remove '%s'\n", file.c_str());
-}
-#pragma endregion
-
-#pragma region 17. Copy Files (cp)
-void Shell::Copy(const vector<string>& files, const string& dest = string()) {
-    if (files.size() == 0 ||  files[0].empty() || dest.empty()) {
-        fprintf(stderr, "Not enough argument given\n");
-        cout << "cp <files> <destination>" << endl;
-        cout << "cp <file> <copied_file>" << endl;
-        return;
-    }
-
-    for (const string& file : files)
-        if (!CopyFileA(file.c_str(), dest.c_str(), false))
-            fprintf(stderr, "Failed to copy '%s' into '%s'\n", file.c_str(),
-                    dest.c_str());
-}
+void Shell::Change_Ownership(vector<string> paths) {}
 #pragma endregion
 
 #pragma region 18. Move Files (mv)
-void Shell::Move(vector<string> files) {
-    cout << "Windows Moved file" << endl;
-}
+void Shell::Move(vector<string> files) { cout << "Windows Moved file" << endl; }
 #pragma endregion
 
 #pragma region 19. Create (touch)
 void Shell::Create_Empty_Files(const vector<string>& files) {
-    cout << "Windows Created file" << endl;
+    if (files.size() == 0 || files[0].empty()) {
+        fprintf(stderr, "No files were given\n");
+        cout << "touch <files>" << endl;
+        return;
+    }
+
+    for (const string& file : files)
+        if (!CreateFileA(file.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
+                         OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL))
+            perror(("Failed to create " + file).c_str());
 }
 #pragma endregion
 
