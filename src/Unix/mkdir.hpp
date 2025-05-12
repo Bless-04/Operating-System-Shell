@@ -2,7 +2,7 @@
 
 void Shell::Make_Directories(const vector<string> &directories)
 {
-    if (directories[0].empty())
+    if (directories.size() == 0 || directories[0].empty())
     {
         fprintf(stderr, "No directories were given\n");
         return;
@@ -10,5 +10,6 @@ void Shell::Make_Directories(const vector<string> &directories)
 
     for (const string &dir : directories)
         if (mkdir(dir.c_str(), 0755) != 0)
-            fprintf(stderr, "Failed to create directory '%s' : %s\n", dir.c_str(), strerror(errno));
+            perror(("Failed to create directory " + dir).c_str());
+           
 }

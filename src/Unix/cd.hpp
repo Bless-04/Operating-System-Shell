@@ -8,7 +8,7 @@ void Shell::Change_Directory(const string &path)
         return;
     }
     if (chdir(path.c_str()) != 0)
-        perror("Failed to change directory");
+        perror(("Failed to change directory to " + path).c_str());
 
     this->Update_Directory();
 }

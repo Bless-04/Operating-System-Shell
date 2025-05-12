@@ -5,16 +5,18 @@
 #include <winternl.h>
 
 #include "cd.hpp"       // 1.
+// 2. clear
 #include "dir.hpp"      // 3.
 #include "environ.hpp"  // 4.
-#include "wc.hpp"       // 21.
-
-// 2. clear
-
 // 5. echo
 // 6. help
 // 7. pause
 // 8. quit
+// 11. ls depends on dir
+// 12. pwd
+#include "wc.hpp"       // 21.
+
+
 
 bool Shell::Update_Directory() noexcept {
     const unsigned long length = GetCurrentDirectoryA(0, NULL);
@@ -31,19 +33,19 @@ bool Shell::Update_Directory() noexcept {
     return true;
 }
 #pragma region 9. chmod
-void Shell::Change_Mode(const string& perms) {
+
+void Shell::Change_Mode(vector<string> files) {
     cout << "Windows Displayed file permissions" << perms << endl;
 }
 #pragma endregion
 
 #pragma region 10. chown
-void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
+void Shell::Change_Ownership(vector<string>& paths) {
     cout << "Windows Displayed file owner" << owner << endl;
 }
 #pragma endregion
 
-// 11. ls depends on dir
-// 12. pwd
+
 
 #pragma region 13. cat
 void Shell::Concatenate(const vector<string>& files) {}
@@ -52,7 +54,7 @@ void Shell::Concatenate(const vector<string>& files) {}
 #pragma region 14. mkdir
 
 void Shell::Make_Directories(const vector<string>& directories) {
-    if (directories[0].empty()) {
+    if (directories.size() == 0 ||  directories[0].empty()) {
         fprintf(stderr, "No directories were given\n");
         cout << "mkdir <directories>" << endl;
         return;
@@ -66,7 +68,7 @@ void Shell::Make_Directories(const vector<string>& directories) {
 
 #pragma region 15. rmdir
 void Shell::Remove_Directories(const vector<string>& directories) {
-    if (directories[0].empty()) {
+    if (directorys.size() == 0 || directories[0].empty()) {
         fprintf(stderr, "No directories were given\n");
         cout << "rmdir <directories>" << endl;
         return;
@@ -81,7 +83,7 @@ void Shell::Remove_Directories(const vector<string>& directories) {
 
 #pragma region 16. Remove Files (rm)
 void Shell::Remove(const vector<string>& files) {
-    if (files[0].empty()) {
+    if (files.size() == 0 || files[0].empty()) {
         fprintf(stderr, "No files were given\n");
         cout << "rm <files>" << endl;
         return;
@@ -95,7 +97,7 @@ void Shell::Remove(const vector<string>& files) {
 
 #pragma region 17. Copy Files (cp)
 void Shell::Copy(const vector<string>& files, const string& dest = string()) {
-    if (files[0].empty() || dest.empty()) {
+    if (files.size() == 0 ||  files[0].empty() || dest.empty()) {
         fprintf(stderr, "Not enough argument given\n");
         cout << "cp <files> <destination>" << endl;
         cout << "cp <file> <copied_file>" << endl;
@@ -110,7 +112,7 @@ void Shell::Copy(const vector<string>& files, const string& dest = string()) {
 #pragma endregion
 
 #pragma region 18. Move Files (mv)
-void Shell::Move(const vector<string>& files, const string& dest) {
+void Shell::Move(vector<string> files) {
     cout << "Windows Moved file" << endl;
 }
 #pragma endregion
@@ -136,7 +138,7 @@ void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
     }
 
     std::string buffer;
-    buffer.resize(1024);  // buffer size
+    buffer.resize(this->BUFFER_SIZE);  // buffer size
     std::regex re(pattern);
     int line = 0;
 

@@ -10,7 +10,6 @@ void Shell::List_Directory(const string &path)
         return;
     }
 
-    const char* TAB2 = "\t\t";
     struct dirent *data;
     while ((data = readdir(dir)) != nullptr)
     {

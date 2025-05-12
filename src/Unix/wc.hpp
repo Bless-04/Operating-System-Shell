@@ -3,6 +3,13 @@
 
 void Shell::Word_Count(const string &file)
 {
+    if (file.empty())
+    {
+        fprintf(stderr, "No files were given\n");
+        cout << "wc <files>" << endl;
+        return;
+    }
+
     const int fd = open(file.c_str(), O_RDONLY);
     if (fd < 0)
     {
@@ -11,7 +18,7 @@ void Shell::Word_Count(const string &file)
         return;
     }
 
-    size_t lines = 0, words = 0;
+    size_t lines = 1, words = 0;
     char buffer[this->BUFFER_SIZE];
     size_t bytes;
     string text;
@@ -21,8 +28,7 @@ void Shell::Word_Count(const string &file)
 
     // counting lines
     for (const char &c : text)
-        if (c == '\n')
-            lines++;
+        if (c == '\n') lines++;
 
     istringstream ss(text);
 

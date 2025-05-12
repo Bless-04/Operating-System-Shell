@@ -1,10 +1,11 @@
 // 16. Remove Files (rm)
 
-void Shell::Remove(const vector<string> &files)
+void Shell::Remove(const vector<string>& files)
 {
-    if (files[0].empty())
+    if (files.size() == 0 ||  files[0].empty())
     {
         fprintf(stderr, "No files were given\n");
+        cout << "rm <files>" << endl;
         return;
     }
 
