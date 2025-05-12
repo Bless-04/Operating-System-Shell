@@ -2,7 +2,6 @@
 
 #include "src/shell_type.h"
 
-using std::cerr;
 using std::getline;
 using std::stringstream;
 
@@ -76,21 +75,19 @@ void DeleteStartingSpaces(vector<string>& args) {
 /// @return command info
 CommandInfo TryExecute(vector<string>& args, Shell& shell) {
     CommandInfo cmd_info = shell.GetCommandType(Shell::SanitizeString(args[0]));
-    /// @note to guarantee no segfault for things that need arg[1] and arg[2]
-    if (args.size() < 3)
-        while (args.size() < 3) args.push_back(string());
 
-    string text;  // for anything that need specific formatted text ; string
-                  // dummy var
+    /// @note for things that need atleast 1 arg
+    string text = (args.size() > 1) ? args[1] : string();
+
     switch (cmd_info.Type) {
         case CD:
-            shell.Change_Directory(args[1]);
+            shell.Change_Directory(text);
             break;
         case CLR:
             shell.Clear_Screen();
             break;
         case LIST_DIR:
-            shell.List_Directory(args[1]);
+            shell.List_Directory(text);
             break;
         case ENVIRON:
             shell.Environment_Variables();
@@ -110,11 +107,15 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
             shell.Quit();
             break;
         case CHMOD:
-            shell.Change_Mode(args[1]);
+
+            if (args.size() < 3)
+                fprintf(stderr, "Not enough arguments");
+            else
+                shell.Change_Mode(vector<string>(args.begin() + 1, args.end()));
             break;
         case CHOWN:
             shell.Change_Ownership(
-                args[1], vector<string>(args.begin() + 2, args.end()));
+                vector<string>(args.begin() + 1, args.end()));
             break;
         case LS:
             shell.List();
@@ -137,22 +138,25 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
             shell.Remove(vector<string>(args.begin() + 1, args.end()));
             break;
         case CP:
-            shell.Copy(vector<string>(args.begin() + 1, args.end() - 1),
-                       args.back());
+            shell.Copy(vector<string>(args.begin() + 1, args.end()));
             break;
         case MV:
-            shell.Move(vector<string>(args.begin() + 1, args.end() - 1),
-                       args.back());
+            shell.Move(vector<string>(args.begin() + 1, args.end()));
             break;
         case TOUCH:
             shell.Create_Empty_Files(
                 vector<string>(args.begin() + 1, args.end()));
             break;
         case GREP:
-            shell.Search_Text_Patterns(args[1], args[2]);
+
+            // must have atleast 2 args or segfault
+            if (args.size() < 3)
+                fprintf(stderr, "Not enough arguments");
+            else
+                shell.Search_Text_Patterns(args[1], args[2]);
             break;
         case WC:
-            shell.Word_Count(args[1]);
+            shell.Word_Count(text);
             break;
 
         default:

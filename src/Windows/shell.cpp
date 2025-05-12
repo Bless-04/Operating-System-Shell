@@ -4,17 +4,26 @@
 #include <windows.system.h>
 #include <winternl.h>
 
-#include "cd.hpp"       // 1.
+// formatter keeps reordering this
+
+#include "cd.hpp"  // 1.
+// 2. clear
 #include "dir.hpp"      // 3.
 #include "environ.hpp"  // 4.
-#include "wc.hpp"       // 21.
-
-// 2. clear
-
 // 5. echo
 // 6. help
 // 7. pause
 // 8. quit
+// 11. ls depends on dir
+// 12. pwd
+#include "cat.hpp"    // 13.
+#include "cp.hpp"     // 17
+#include "mkdir.hpp"  // 14.
+#include "mv.hpp"     // 18.
+#include "rm.hpp"     // 16.
+#include "rmdir.hpp"  // 15.
+#include "touch.hpp"  // 19.
+#include "wc.hpp"     // 21.
 
 bool Shell::Update_Directory() noexcept {
     const unsigned long length = GetCurrentDirectoryA(0, NULL);
@@ -30,94 +39,33 @@ bool Shell::Update_Directory() noexcept {
 
     return true;
 }
-#pragma region 9. chmod
-void Shell::Change_Mode(const string& perms) {
-    cout << "Windows Displayed file permissions" << perms << endl;
-}
-#pragma endregion
 
-#pragma region 10. chown
-void Shell::Change_Ownership(const string& owner, const vector<string>& paths) {
-    cout << "Windows Displayed file owner" << owner << endl;
-}
-#pragma endregion
+#pragma region 9. chmod // unstable ; havent gotten this to work once
 
-// 11. ls depends on dir
-// 12. pwd
-
-#pragma region 13. cat
-void Shell::Concatenate(const vector<string>& files) {}
-#pragma endregion
-
-#pragma region 14. mkdir
-
-void Shell::Make_Directories(const vector<string>& directories) {
-    if (directories[0].empty()) {
-        fprintf(stderr, "No directories were given\n");
-        cout << "mkdir <directories>" << endl;
+void Shell::Change_Mode(vector<string> files) {
+    if (files.size() < 2 || files[0].empty()) {
+        fprintf(stderr, "Not enough parameters\n");
+        cout << "chmod <permissions> <files>" << endl;
         return;
     }
 
-    for (const string& dir : directories)
-        if (!CreateDirectoryA(dir.c_str(), NULL))
-            fprintf(stderr, "Failed to create directory '%s'\n", dir.c_str());
+    const char* perms = files[0].c_str();
+    files.erase(files.begin());
+
+    for (const string& file : files)
+        if (!SetFileAttributesA(file.c_str(), atoi(perms)))
+            perror(("Failed to change permissions of file " + file).c_str());
 }
 #pragma endregion
 
-#pragma region 15. rmdir
-void Shell::Remove_Directories(const vector<string>& directories) {
-    if (directories[0].empty()) {
-        fprintf(stderr, "No directories were given\n");
-        cout << "rmdir <directories>" << endl;
-        return;
-    }
-
-    for (const string& dir : directories)
-        if (!RemoveDirectoryA(dir.c_str()))
-            fprintf(stderr, "Failed to Remove Directory'%s", dir.c_str());
-}
-
-#pragma endregion
-
-#pragma region 16. Remove Files (rm)
-void Shell::Remove(const vector<string>& files) {
-    if (files[0].empty()) {
+#pragma region 10. chown //
+void Shell::Change_Ownership(vector<string> paths) {
+    if (paths.size() == 0 || paths[0].empty()) {
         fprintf(stderr, "No files were given\n");
-        cout << "rm <files>" << endl;
+        cout << "chown <owner> <files>" << endl;
         return;
     }
-
-    for (const string& file : files)
-        if (!DeleteFileA(file.c_str()) && !RemoveDirectoryA(file.c_str()))
-            fprintf(stderr, "Failed to Remove '%s'\n", file.c_str());
-}
-#pragma endregion
-
-#pragma region 17. Copy Files (cp)
-void Shell::Copy(const vector<string>& files, const string& dest = string()) {
-    if (files[0].empty() || dest.empty()) {
-        fprintf(stderr, "Not enough argument given\n");
-        cout << "cp <files> <destination>" << endl;
-        cout << "cp <file> <copied_file>" << endl;
-        return;
-    }
-
-    for (const string& file : files)
-        if (!CopyFileA(file.c_str(), dest.c_str(), false))
-            fprintf(stderr, "Failed to copy '%s' into '%s'\n", file.c_str(),
-                    dest.c_str());
-}
-#pragma endregion
-
-#pragma region 18. Move Files (mv)
-void Shell::Move(const vector<string>& files, const string& dest) {
-    cout << "Windows Moved file" << endl;
-}
-#pragma endregion
-
-#pragma region 19. Create (touch)
-void Shell::Create_Empty_Files(const vector<string>& files) {
-    cout << "Windows Created file" << endl;
+    cout << "chown is not implemented on Windows" << endl;
 }
 #pragma endregion
 
@@ -129,31 +77,30 @@ void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
         return;
     }
 
-    std::ifstream ifs(file);
-    if (!ifs.is_open()) {
-        std::cerr << "Error opening file: " << file << std::endl;
+    HANDLE hFile = CreateFileA(file.c_str(),           // File name
+                               GENERIC_READ,           // Read access
+                               FILE_SHARE_READ,        // Allow other reads
+                               NULL,                   // Default security
+                               OPEN_EXISTING,          // if exists
+                               FILE_ATTRIBUTE_NORMAL,  // Normal file
+                               NULL);                  // No template
+
+    if (hFile == INVALID_HANDLE_VALUE) {
+        fprintf(stderr, "Failed to open '%s'\n", file.c_str());
         return;
     }
 
-    std::string buffer;
-    buffer.resize(1024);  // buffer size
-    std::regex re(pattern);
-    int line = 0;
+    char buffer[BUFFER_SIZE];
+    unsigned long bytes = 0;  // readfile doesnt allow size_t??
+    string text;
 
-    while (ifs.read(&buffer[0], buffer.size())) {
-        std::string text(buffer, 0, ifs.gcount());
-        auto words_begin = std::sregex_iterator(text.begin(), text.end(), re);
-        auto words_end = std::sregex_iterator();
-
-        for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
-            std::smatch match = *i;
-            std::cout << file << ":" << line << ": " << match.str(0)
-                      << std::endl;
-        }
-        line++;
+    while (ReadFile(hFile, buffer, sizeof(buffer), &bytes, NULL) && bytes > 0) {
+        string text(buffer, bytes);
+        if (text.find(pattern) != string::npos)
+            cout << file << ":" << endl << text << endl;
     }
 
-    ifs.close();
+    CloseHandle(hFile);
 }
 #pragma endregion
 

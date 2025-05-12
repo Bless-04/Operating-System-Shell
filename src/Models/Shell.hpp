@@ -139,12 +139,12 @@ class Shell {
 
     /** (chmod)
      * modifies file permissions for users, groups, and others. */
-    void Change_Mode(const string&);
+    void Change_Mode(vector<string>);
 
     /** (chown)
      * Changes the ownership of a file or directory, allowing a user to
      * specify the new owner and/or group. */
-    void Change_Ownership(const string&, const vector<string>& paths);
+    void Change_Ownership(vector<string>);
 
     /** (ls)
      * Display a list of files and directories in the current directory. */
@@ -174,11 +174,11 @@ class Shell {
 
     /** (cp)
      * copies files or directories from one location to another */
-    void Copy(const vector<string>&, const string&);
+    void Copy(vector<string>);
 
     /** (mv)
      * moves files or directories from one location to another */
-    void Move(const vector<string>&, const string&);
+    void Move(vector<string>);
 
     /** (touch)
      * creates empty files or updates access/modification times */
