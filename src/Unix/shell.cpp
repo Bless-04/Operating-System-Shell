@@ -8,11 +8,10 @@
 
 #include "../Models/Shell.cpp"
 
-#include "cd.hpp"       // 1.
-//#include "dir.hpp"      // 3.
+#include "cd.hpp"      // 1.
+#include "dir.hpp"     // 3.
 #include "environ.hpp" // 4.
-#include "wc.hpp"       // 21.
-
+#include "wc.hpp"      // 21.
 
 bool Shell::Update_Directory() noexcept
 {
@@ -25,32 +24,7 @@ bool Shell::Update_Directory() noexcept
     return true;
 }
 
-
 // 2. clear
-
-#pragma region 3. dir
-void Shell::List_Directory(const string &path)
-{
-    DIR *dir = path.empty() ? opendir(".") : opendir(path.c_str());
-    if (!dir)
-    {
-        perror("Failed to open directory");
-        return;
-    }
-
-    struct dirent *entry;
-    while ((entry = readdir(dir)) != nullptr)
-    {
-        cout << entry->d_name << "\t";
-    }
-    cout << endl;
-    closedir(dir);
-}
-
-#pragma endregion
-
-
-
 // 5. echo
 // 6. help
 // 7. pause
@@ -119,10 +93,8 @@ void Shell::Make_Directories(const vector<string> &directories)
     }
 
     for (const string &dir : directories)
-    {
-        if (mkdir(dir.c_str(), 0755) == -1)
-            perror(("mkdir: " + dir).c_str());
-    }
+        if (!mkdir(dir.c_str(), 0755))
+            fprintf(stderr, "Failed to create directory '%s' : %s\n", dir.c_str(), strerror(errno));
 }
 #pragma endregion
 
@@ -137,7 +109,7 @@ void Shell::Remove_Directories(const vector<string> &directories)
 
     for (const string &dir : directories)
         if (rmdir(dir.c_str()) == -1)
-            perror(("rmdir: " + dir).c_str());
+            fprintf(stderr, "Failed to remove directory '%s' : %s\n", dir.c_str(), strerror(errno));
 }
 
 #pragma endregion
@@ -261,7 +233,7 @@ void Shell::Create_Empty_Files(const vector<string> &files)
 #pragma region 20. search text patterns (grep)
 void Shell::Search_Text_Patterns(const string &pattern, const string &file)
 {
-    
+
     /*
     if (pattern.empty() || file.empty())
     {
@@ -311,13 +283,10 @@ void Shell::Search_Text_Patterns(const string &pattern, const string &file)
 }
 #pragma endregion
 
-
-
 #pragma region Execution / Starting Process
+
 pid_t Shell::Execute(const string &name)
 {
-    /** chapter 3 */
-
     pid_t pid = fork();
 
     if (pid < 0)
@@ -328,21 +297,19 @@ pid_t Shell::Execute(const string &name)
     else if (pid == 0)
     {
         // Child process
-        execlp(name.c_str(), name.c_str(), NULL);
-
-        fprintf(stderr, "Failed to execute %s\n", name.c_str());
+        execlp(name.c_str(), name.c_str(), (char *)NULL);
+        // If execlp returns, it means an error occurred
+        fprintf(stderr, "Failed to execute '%s': %s\n", name.c_str(), strerror(errno));
         exit(EXIT_FAILURE);
     }
     else
-    { /* parent process*/
-
-        printf("Started Process '%s' with PID: %lld\n", name.c_str(), pid);
+    {
+        // Parent process
+        printf("Started Process '%s' with PID: %lld\n", name.c_str(), (long long)pid);
 
         int status;
         waitpid(pid, &status, 0);
         return pid;
     }
-
-    return pid;
 }
 #pragma endregion
