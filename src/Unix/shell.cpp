@@ -11,6 +11,9 @@
 #include "cd.hpp"      // 1.
 #include "dir.hpp"     // 3.
 #include "environ.hpp" // 4.
+#include "mkdir.hpp"   // 14.
+#include "rmdir.hpp"   // 15.
+#include "rm.hpp"      // 16.
 #include "wc.hpp"      // 21.
 
 bool Shell::Update_Directory() noexcept
@@ -57,7 +60,7 @@ void Shell::Change_Ownership(const string &owner, const vector<string> &paths)
 #pragma region 13. cat
 void Shell::Concatenate(const vector<string> &files)
 {
-    if (files.empty())
+    if (files[0].empty())
     {
         fprintf(stderr, "No files were given\n");
         return;
@@ -82,55 +85,20 @@ void Shell::Concatenate(const vector<string> &files)
 }
 #pragma endregion
 
-#pragma region 14. mkdir
 
-void Shell::Make_Directories(const vector<string> &directories)
-{
-    if (directories.empty())
-    {
-        fprintf(stderr, "No directories were given\n");
-        return;
-    }
 
-    for (const string &dir : directories)
-        if (!mkdir(dir.c_str(), 0755))
-            fprintf(stderr, "Failed to create directory '%s' : %s\n", dir.c_str(), strerror(errno));
-}
-#pragma endregion
 
-#pragma region 15. rmdir
-void Shell::Remove_Directories(const vector<string> &directories)
-{
-    if (directories.empty())
-    {
-        fprintf(stderr, "No directories were given\n");
-        return;
-    }
 
-    for (const string &dir : directories)
-        if (rmdir(dir.c_str()) == -1)
-            fprintf(stderr, "Failed to remove directory '%s' : %s\n", dir.c_str(), strerror(errno));
-}
 
-#pragma endregion
 
-#pragma region 16. Remove Files (rm)
-void Shell::Remove(const vector<string> &files)
-{
-    if (files.empty())
-    {
-        fprintf(stderr, "No files were given\n");
-        return;
-    }
-
-    for (const string &file : files)
-        if (unlink(file.c_str()) == -1)
-            perror(("rm: " + file).c_str());
-}
-#pragma endregion
 
 #pragma region 17. Copy Files (cp)
-void Shell::Copy(const vector<string> &files, const string &dest) {}
+void Shell::Copy(const vector<string> &files, const string &dest) {
+
+
+
+
+}
 #pragma endregion
 
 #pragma region 18. Move Files (mv)
@@ -219,13 +187,13 @@ void Shell::Move(const vector<string> &files, const string &destination)
 #pragma region 19. Create (touch)
 void Shell::Create_Empty_Files(const vector<string> &files)
 {
-    for (size_t i = 1; i < files.size(); ++i)
-    {
-        int fd = open(files[i].c_str(), O_CREAT | O_WRONLY, 0644);
-        if (fd == -1)
-            perror("touch failed");
-        else
-            close(fd);
+    for (const string& file : files){
+        int f = open(file.c_str(), O_CREAT | O_WRONLY, 0644);
+        if (f == -1)
+            perror(("touch failed for " + file).c_str());
+        else {
+            close(f);
+        }
     }
 }
 #pragma endregion

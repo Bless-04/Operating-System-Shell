@@ -75,9 +75,9 @@ void DeleteStartingSpaces(vector<string>& args) {
 /// @return command info
 CommandInfo TryExecute(vector<string>& args, Shell& shell) {
     CommandInfo cmd_info = shell.GetCommandType(Shell::SanitizeString(args[0]));
-    /// @note to guarantee no segfault for things that need arg[1] and arg[2]
-    if (args.size() < 3)
-        while (args.size() < 3) args.push_back(string());
+    /// @note to guarantee no segfault for things that need arg[1]
+    if (args.size() < 2)
+        while (args.size() < 2) args.push_back(string());
 
     string text;  // for anything that need specific formatted text ; string
                   // dummy var
@@ -112,8 +112,7 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
             shell.Change_Mode(args[1]);
             break;
         case CHOWN:
-            shell.Change_Ownership(
-                args[1], vector<string>(args.begin() + 2, args.end()));
+            shell.Change_Ownership(args[1], vector<string>(args.begin() + 2, args.end()));
             break;
         case LS:
             shell.List();
@@ -148,6 +147,11 @@ CommandInfo TryExecute(vector<string>& args, Shell& shell) {
                 vector<string>(args.begin() + 1, args.end()));
             break;
         case GREP:
+
+            if (args.size() < 3) {
+                fprintf(stderr, "Not enough arguments given\n");
+                return INVALID;
+            }
             shell.Search_Text_Patterns(args[1], args[2]);
             break;
         case WC:
