@@ -11,5 +11,5 @@ void Shell::Remove(const vector<string>& files)
 
     for (const string &file : files)
         if (remove(file.c_str()) != 0) //unlink also works
-           fprintf(stderr, "Failed to remove file '%s' : %s\n", file.c_str(), strerror(errno));    
+            perror(("Failed to Remove " + file).c_str());   
 }

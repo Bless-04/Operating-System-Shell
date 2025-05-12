@@ -91,7 +91,7 @@ pid_t Shell::Execute(const string &name)
         // Child process
         execlp(name.c_str(), name.c_str(), (char *)NULL);
         // If execlp returns, it means an error occurred
-        fprintf(stderr, "Failed to execute '%s': %s\n", name.c_str(), strerror(errno));
+        fprintf(stderr, "Failed to execute '%s'\n", name.c_str());
         exit(EXIT_FAILURE);
     }
     else
