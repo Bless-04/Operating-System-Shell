@@ -52,7 +52,7 @@ Shell::Shell(unsigned int buffer) : BUFFER_SIZE(buffer) {
 
     MapCommand(&COMMANDS.at("mv"), {"move", "copy"});
     // touch
-    // grep
+    MapCommand(&COMMANDS.at("grep"), {"search", "find","regex"});
     // wc
 };
 
