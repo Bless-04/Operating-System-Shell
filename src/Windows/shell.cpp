@@ -40,7 +40,7 @@ bool Shell::Update_Directory() noexcept {
     return true;
 }
 
-#pragma region 9. chmod
+#pragma region 9. chmod // unstable ; havent gotten this to work once
 
 void Shell::Change_Mode(vector<string> files) {
     if (files.size() < 2 || files[0].empty()) {
@@ -58,8 +58,15 @@ void Shell::Change_Mode(vector<string> files) {
 }
 #pragma endregion
 
-#pragma region 10. chown
-void Shell::Change_Ownership(vector<string> paths) {}
+#pragma region 10. chown //
+void Shell::Change_Ownership(vector<string> paths) {
+    if (paths.size() == 0 || paths[0].empty()) {
+        fprintf(stderr, "No files were given\n");
+        cout << "chown <owner> <files>" << endl;
+        return;
+    }
+    cout << "chown is not implemented on Windows" << endl;
+}
 #pragma endregion
 
 #pragma region 20. search text patterns (grep)
