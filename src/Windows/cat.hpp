@@ -21,7 +21,7 @@ void Shell::Concatenate(const vector<string>& files) {
             continue;
         }
 
-        char buffer[BUFFER_SIZE];
+        char buffer[this->BUFFER_SIZE];
         unsigned long bytes = 0;
 
         while (ReadFile(hFile, buffer, sizeof(buffer), &bytes, NULL) &&
