@@ -249,24 +249,24 @@ void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
     while (read(fd, buffer, sizeof(buffer)) > 0) {
         if (std::regex(buffer, pattern)) }
 
-    string line;
-    int line_number = 1;
-    bool match_found = false;
+    "No matches found for pattern: " << pattern << std::endl;
+}
+string line;
+int line_number = 1;
+bool match_found = false;
 
-    while (std::getline(input_file, line)) {
-        if (line.find(pattern) != string::npos) {
-            std::cout << file << ":" << line_number << ": " << line
-                      << std::endl;
-            match_found = true;
-        }
-        line_number++;
+while (std::getline(input_file, line)) {
+    if (line.find(pattern) != string::npos) {
+        std::cout << file << ":" << line_number << ": " << line << std::endl;
+        match_found = true;
     }
+    line_number++;
+}
 
-    input_file.close();
+input_file.close();
 
-    if (!match_found) {
-        std::cout << "No matches found for pattern: " << pattern << std::endl;
-    }
+if (!match_found) {
+    std::cout <<
 }
 #pragma endregion
 

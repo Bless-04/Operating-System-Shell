@@ -1,10 +1,9 @@
 /** For Defining Shell Functions that are windows specific */
-#include <direct.h>
+#include "../Models/Shell.cpp"
+
 #include <windows.system.h>
 #include <winternl.h>
 
-using std::istringstream;
-#include "../Models/Shell.cpp"
 #include "cd.hpp"       // 1.
 #include "dir.hpp"      // 3.
 #include "environ.hpp"  // 4.
@@ -95,15 +94,16 @@ void Shell::Remove(const vector<string>& files) {
 #pragma endregion
 
 #pragma region 17. Copy Files (cp)
-void Shell::Copy(const vector<string>& files, const string& dest) {
+void Shell::Copy(const vector<string>& files, const string& dest = string()) {
     if (files[0].empty() || dest.empty()) {
         fprintf(stderr, "Not enough argument given\n");
         cout << "cp <files> <destination>" << endl;
+        cout << "cp <file> <copied_file>" << endl;
         return;
     }
 
     for (const string& file : files)
-        if (!CopyFileA(file.c_str(), "//d", FALSE))
+        if (!CopyFileA(file.c_str(), dest.c_str(), false))
             fprintf(stderr, "Failed to copy '%s' into '%s'\n", file.c_str(),
                     dest.c_str());
 }
@@ -123,7 +123,37 @@ void Shell::Create_Empty_Files(const vector<string>& files) {
 
 #pragma region 20. search text patterns (grep)
 void Shell::Search_Text_Patterns(const string& pattern, const string& file) {
-    cout << "Windows Opened file" << endl;
+    if (file.empty()) {
+        fprintf(stderr, "No files were given\n");
+        cout << "grep <pattern> <file>" << endl;
+        return;
+    }
+
+    std::ifstream ifs(file);
+    if (!ifs.is_open()) {
+        std::cerr << "Error opening file: " << file << std::endl;
+        return;
+    }
+
+    std::string buffer;
+    buffer.resize(1024);  // buffer size
+    std::regex re(pattern);
+    int line = 0;
+
+    while (ifs.read(&buffer[0], buffer.size())) {
+        std::string text(buffer, 0, ifs.gcount());
+        auto words_begin = std::sregex_iterator(text.begin(), text.end(), re);
+        auto words_end = std::sregex_iterator();
+
+        for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
+            std::smatch match = *i;
+            std::cout << file << ":" << line << ": " << match.str(0)
+                      << std::endl;
+        }
+        line++;
+    }
+
+    ifs.close();
 }
 #pragma endregion
 

@@ -4,12 +4,15 @@
 
 #include <stdio.h>
 
+#include <fstream>
+#include <regex>  //for grep
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
 #include "CommandInfo.hpp"
 
+using std::istringstream;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
