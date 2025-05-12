@@ -48,11 +48,12 @@ Shell::Shell(unsigned int buffer) : BUFFER_SIZE(buffer) {
     // mkdir
     // rmdir
     MapCommand(&COMMANDS.at("rm"), {"remove", "delete", "del"});
-    // cp
 
-    MapCommand(&COMMANDS.at("mv"), {"move", "copy"});
-    // touch
-    MapCommand(&COMMANDS.at("grep"), {"search", "find","regex"});
+    MapCommand(&COMMANDS.at("cp"), {"copy"});
+
+    MapCommand(&COMMANDS.at("mv"), {"move"});
+
+    MapCommand(&COMMANDS.at("grep"), {"search", "find", "regex"});
     // wc
 };
 
