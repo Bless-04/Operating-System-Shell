@@ -1,6 +1,7 @@
 /** For Defining Shell Functions that are windows specific */
 #include "../Models/Shell.cpp"
 
+#include <Aclapi.h>  //
 #include <windows.system.h>
 #include <winternl.h>
 
@@ -58,14 +59,28 @@ void Shell::Change_Mode(vector<string> files) {
 }
 #pragma endregion
 
-#pragma region 10. chown //
+#pragma region 10. chown // UNSTABLE
 void Shell::Change_Ownership(vector<string> paths) {
     if (paths.size() == 0 || paths[0].empty()) {
         fprintf(stderr, "No files were given\n");
         cout << "chown <owner> <files>" << endl;
         return;
     }
-    cout << "chown is not implemented on Windows" << endl;
+
+    const char* newOwner = paths[0].c_str();
+    paths.erase(paths.begin());
+    PSID pSid = nullptr;
+    unsigned long sidSize = 0, domainSize = 0;
+    SID_NAME_USE sidType;  // the security identifier users groups etc
+    string domainName;
+
+    pSid = new PSID[sidSize];
+    domainName.resize(domainSize);
+
+    if (!LookupAccountNameA(nullptr, newOwner, pSid, &sidSize, &domainName[0],
+                            &domainSize, &sidType)) {
+        perror("Failed to lookup account name");
+    }
 }
 #pragma endregion
 
