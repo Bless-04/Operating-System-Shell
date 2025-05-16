@@ -10,6 +10,6 @@ void Shell::Remove(const vector<string>& files)
     }
 
     for (const string &file : files)
-        if (remove(file.c_str()) != 0) //unlink also works
-            perror(("Failed to Remove " + file).c_str());   
+        if (syscall(SYS_unlink, file.c_str()) != 0)
+            perror(("Failed to Remove " + file).c_str());
 }
