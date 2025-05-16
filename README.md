@@ -72,9 +72,8 @@ command [arguments...]
 - `src/`: Contains implementation files for each command
 - `src/Windows/`: Windows-specific command implementations
 - `src/Unix/`: Unix-specific command implementations
-- `src/Models/`: Shell model classes
+- `src/Models/`: Shell model classes. Also holds functions that should work no matter the platform
 - `439shell.cpp`: Main shell implementation
-- `439shell.exe`: Compiled executable
 
 ## System Requirements
 
