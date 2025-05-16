@@ -17,7 +17,7 @@ void Shell::Change_Mode(vector<string> files)
         mode_t mode = strtol(permissions.c_str(), nullptr, 8);
 
         for (const string& file : files)
-        if (chmod(file.c_str(), mode) == -1) 
+        if (syscall(SYS_chmod, file.c_str(), mode) == -1) 
             perror(("Failed to change permissions of file " + file).c_str());
     }catch(const std::invalid_argument &e){
         fprintf(stderr,"%s' are not valid permisions\n",permissions.c_str());
