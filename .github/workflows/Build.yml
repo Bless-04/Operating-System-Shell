@@ -8,7 +8,7 @@ on:
         - '**/*.c'
         - '**/*.h'
         - '**/*.hpp'
-        - '**/*.yml'
+        #- '**/*.yml'
     workflow_dispatch:
 
 jobs:
