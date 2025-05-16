@@ -3,6 +3,11 @@ name: Build Cross-Platform
 
 on:
     push:
+        paths:
+        - '**/*.cpp'
+        - '**/*.c'
+        - '**/*.h'
+        - '**/*.hpp'
     workflow_dispatch:
 
 jobs:
