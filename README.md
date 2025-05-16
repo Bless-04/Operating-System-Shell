@@ -29,7 +29,7 @@ This shell implements the following commands:
 
 The project is built using C++. To build the shell:
 
-1. Ensure you have a C++ compiler installed (e.g., g++)
+1. Ensure you have a C++ compiler installed like g++
 2. Navigate to the project directory
 3. Compile the main file:
 ```bash
@@ -45,7 +45,7 @@ Run the compiled shell:
 
 The shell will start with a prompt where you can enter commands. 
 ```
-command [arguments...]
+>> [command] [arguments...]
 ```
 
 ## Command Reference
