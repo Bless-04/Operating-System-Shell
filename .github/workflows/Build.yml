@@ -1,4 +1,4 @@
-#This tests that shell builds on multiple platforms
+#tests that shell builds on multiple platforms
 name: Build Cross-Platform
 
 on:
@@ -8,6 +8,7 @@ on:
         - '**/*.c'
         - '**/*.h'
         - '**/*.hpp'
+        - '**/*.yml'
     workflow_dispatch:
 
 jobs:
