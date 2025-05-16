@@ -38,6 +38,7 @@ g++ 439shell.cpp -o 439shell
 
 ## Usage
 
+### Interactive Mode
 Run the compiled shell:
 ```bash
 ./439shell
@@ -46,6 +47,20 @@ Run the compiled shell:
 The shell will start with a prompt where you can enter commands. 
 ```
 >> [command] [arguments...]
+```
+
+### Command Line Mode
+You can also run individual commands directly from the command line without actually starting the shell.
+```bash
+./439shell [command] [arguments...]
+```
+
+Example:
+```bash
+./439shell help
+./439shell ls
+./439shell mkdir new_directory
+./439shell cat file.txt
 ```
 
 ## Command Reference
