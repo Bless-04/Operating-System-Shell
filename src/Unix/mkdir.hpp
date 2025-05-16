@@ -1,5 +1,6 @@
 // 14. mkdir
 
+
 void Shell::Make_Directories(const vector<string> &directories)
 {
     if (directories.size() == 0 || directories[0].empty())
@@ -9,7 +10,12 @@ void Shell::Make_Directories(const vector<string> &directories)
     }
 
     for (const string &dir : directories)
-        if (mkdir(dir.c_str(), 0755) != 0)
+    {
+        if (syscall(SYS_mkdir, dir.c_str(), 0755) != 0)
+        {
             perror(("Failed to create directory " + dir).c_str());
+        }
+    }
+
            
 }
